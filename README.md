@@ -22,7 +22,7 @@ This notebook summarizes the overall change and the class-level changes during t
 1. **Environment Setup:** Install requiered packages, import libraries, mount Google Drive and set input/output paths.
 2. **Data Preparation:** Define the years, class disctionary, and load and mask raster files.
 3. **Confusion Matrix Generation:** Interval matrices, Extent matrix, Sum matrix, and Alternation matrix.
-4. **Change Component Calculation:** Calculate the components of change Quantity, Exchange, Shift, and Alternation.
+4. **Change Component Calculation:** Calculate the components of change Quantity, Allocation Exchange, Allocation Shift, Alternation Exchange, and Alternation Shift.
 5. **Plot Components of Change:**.
 6. **Trajectory Analysis:**
 
