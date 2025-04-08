@@ -715,7 +715,7 @@ plt.show()
 
 
     
-<img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/README_figures/graphic_change_components_time_interval.jpeg" width="200" height="400">
+<img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/README_figures/graphic_change_components_time_interval.jpeg" width="600" height="400">
     
 
 
