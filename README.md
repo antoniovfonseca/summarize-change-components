@@ -11,7 +11,7 @@
 
 **Purpose:**
 
-This notebook summarizes the overall change and the class-level changes during time intervals by computing five componentes: Quantity, Allocation Exchange, Allocation Shift, Alternation Exchange, and Alternation Shift.
+This notebook summarizes the overall change and the class-level changes during time intervals by computing five components: Quantity, Allocation Exchange, Allocation Shift, Alternation Exchange, and Alternation Shift.
 
 **Data Description:**
 - **Source:** [MapBiomas Project](https://brasil.mapbiomas.org/en/)
@@ -32,3 +32,6 @@ The United States National Aeronautical and Space Administration supported this 
 
 <img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/logos/nasa_lulc_dark.png" width="150" height="100"> <img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/logos/mapbiomas_geral.png" width="120" height="70">
           <img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/logos/clark_logo_horizontal.png" width="150" height="70">
+
+---
+## **Example Data**
