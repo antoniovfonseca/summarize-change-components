@@ -330,9 +330,9 @@ plot_rasters_auto(image_paths, class_labels_dict, years)
 
 
     
-<img src="[https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/logos/nasa_lulc_dark.png](https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/README_figures/map_input.jpeg]">
+<img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/README_figures/map_input.jpeg]">
     
-
+<img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/logos/nasa_lulc_dark.png" width="150" height="100">
 
 ## **3.Generate the Confusion Matrix**
 
