@@ -330,7 +330,7 @@ plot_rasters_auto(image_paths, class_labels_dict, years)
 
 
     
-<img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/README_figures/map_input.jpeg" width="250" height="500">
+<img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/README_figures/map_input.jpeg" width="400" height="500">
 
 ## **3.Generate the Confusion Matrix**
 
