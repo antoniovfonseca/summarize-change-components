@@ -808,7 +808,7 @@ plt.show()
 
 
     
-![png](summarize_change_components_toydata_files/summarize_change_components_toydata_30_0.png)
+<img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/README_figures/graphic_change_component_overall.jpeg" width="600" height="400">
     
 
 
@@ -926,7 +926,7 @@ ComponentVisualizer.plot_gain_loss_stacked(
 
 
     
-![png](summarize_change_components_toydata_files/summarize_change_components_toydata_32_0.png)
+<img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/README_figures/graphic_change_component_change_class.jpeg" width="600" height="400">
     
 
 
@@ -1187,7 +1187,7 @@ print("Map saved successfully in the folder:", output_path)
 
 
     
-![png](summarize_change_components_toydata_files/summarize_change_components_toydata_35_0.png)
+<img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/README_figures/map_trajectories.jpeg" width="600" height="400">
     
 
 
