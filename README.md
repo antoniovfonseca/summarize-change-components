@@ -15,16 +15,15 @@ This notebook summarizes the overall change and the class-level changes during t
 
 **Data Description:**
 - **Source:** [MapBiomas Project](https://brasil.mapbiomas.org/en/)
-- **Coverage:** Western Bahia, Brazil, 5-years time intervals from 1990 to 2020.
+- **Coverage:** Western Bahia, Brazil, 5-year time intervals from 1990 to 2020.
 - **Resolution and Format:** TIF files at 30m resolution.
 
 **Notebook Outline:**
-1. **Environment Setup:** Install requiered packages, import libraries, mount Google Drive and set input/output paths.
-2. **Data Preparation:** Define the years, class disctionary, and load and mask raster files.
+1. **Environment Setup:** Install required packages, import libraries, mount Google Drive, and set input/output paths.
+2. **Data Preparation:** Define the years, class dictionary, and load and mask raster files.
 3. **Confusion Matrix Generation:** Interval matrices, Extent matrix, Sum matrix, and Alternation matrix.
 4. **Change Component Calculation:** Calculate the components of change Quantity, Allocation Exchange, Allocation Shift, Alternation Exchange, and Alternation Shift.
-5. **Plot Components of Change:**.
-6. **Trajectory Analysis:**
+6. **Trajectory Analysis:** Temporal pattern of  change observed in pixel data over a time series, categorized into four distinct types on the map.
 
 **Acknowledgements:**
 
