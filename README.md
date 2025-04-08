@@ -715,7 +715,7 @@ plt.show()
 
 
     
-![png](summarize_change_components_toydata_files/summarize_change_components_toydata_28_0.png)
+<img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/README_figures/graphic_change_components_time_interval.jpeg" width="200" height="400">
     
 
 
