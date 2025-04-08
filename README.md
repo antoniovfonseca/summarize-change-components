@@ -1188,9 +1188,8 @@ print("Map saved successfully in the folder:", output_path)
 
     
 <img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/README_figures/map_trajectories.jpeg" width="600" height="400">
-    
 
 
-    Map saved successfully in the folder: /content/drive/MyDrive/change-components/output_toydata/
+
     
 
