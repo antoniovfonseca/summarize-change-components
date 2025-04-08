@@ -330,7 +330,7 @@ plot_rasters_auto(image_paths, class_labels_dict, years)
 
 
     
-![png](summarize_change_components_toydata_files/summarize_change_components_toydata_19_0.png)
+![png]([summarize_change_components_toydata_files/summarize_change_components_toydata_19_0.png](https://github.com/antoniovfonseca/summarize-change-components/blob/main/README_figures/map_input.jpeg))
     
 
 
