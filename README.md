@@ -1187,7 +1187,7 @@ plt.close()
 print("Map saved successfully in the folder:", output_path)
 ```
 
-<img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/README_figures/graphic_trajectory_distribution.jpeg" width="600" height="400">
+<img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/README_figures/graphic_trajectory_distribution.jpeg" width="500" height="400">
 
 
     
