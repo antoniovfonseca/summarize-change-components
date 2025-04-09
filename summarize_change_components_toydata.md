@@ -60,6 +60,9 @@ from google.colab import drive
 drive.mount('/content/drive')
 ```
 
+    Mounted at /content/drive
+    
+
 ### **1.4.Setting Paths to Image Files**
 
 The user must include the year in the raster map name.
@@ -90,6 +93,9 @@ if not os.path.exists(output_path):
 else:
     print("Folder already exists.")
 ```
+
+    Folder already exists.
+    
 
 ## **2.Data Preparation**
 
@@ -1028,21 +1034,17 @@ raster_path = os.path.join(output_path, 'trajectory.tif')
 # Define the resolution (dots per inch) of the output image
 dpi = 300
 
-# Set a scale factor to maintain the size of the raster data as is
-scale_factor = 1
-
 # Define legend elements with custom labels and colors for different categories
 legend_elements = [
-    Rectangle((0, 0), 1, 1, facecolor='#d9d9d9', label='1: Start class matches end class while alternation = 0'),
-    Rectangle((0, 0), 1, 1, facecolor='#990033', label='2: Start class matches end class while alternation > 0'),
-    Rectangle((0, 0), 1, 1, facecolor='#cccc00', label='3: Start class differs from end class with transitions'),
-    Rectangle((0, 0), 1, 1, facecolor='#000066', label='4: Start class differs from end class with no transitions')
+    Rectangle((0, 0), 1, 1, facecolor='#d9d9d9', label='1:Start class matches end class while alternation = 0'),
+    Rectangle((0, 0), 1, 1, facecolor='#990033', label='2:Start class matches end class while alternation > 0'),
+    Rectangle((0, 0), 1, 1, facecolor='#cccc00', label='3:Start class differs from end class while at least one \ntime interval transitions from start class to end class'),
+    Rectangle((0, 0), 1, 1, facecolor='#000066', label='4:Start class differs from end class while no time \ninterval transitions from start class to end class')
 ]
 
 # Define a custom color map for visualizing the raster data
 cmap = ListedColormap([
-    '#FFFFFF',  # Background or no data
-    '#d9d9d9',  # Trajectory 1
+    # '#d9d9d9',  # Trajectory 1
     '#990033',  # Trajectory 2
     '#cccc00',  # Trajectory 3
     '#000066',  # Trajectory 4
@@ -1050,18 +1052,8 @@ cmap = ListedColormap([
 
 # Open the raster file using rasterio
 with rasterio.open(raster_path) as src:
-    # Read and resize the raster data based on the scale factor
-    data = src.read(
-        1,
-        out_shape=(int(src.height * scale_factor), int(src.width * scale_factor)),
-        resampling=rasterio.enums.Resampling.nearest
-    )
-
-    # Adjust the transformation of the raster data to match the new dimensions
-    transform = src.transform * src.transform.scale(
-        (src.width / data.shape[1]),
-        (src.height / data.shape[0])
-    )
+    # Read the raster data at original resolution
+    data = src.read(1)
 
     # Store original transformation settings
     original_transform = src.transform
@@ -1087,9 +1079,6 @@ with rasterio.open(raster_path) as src:
     ax.xaxis.set_major_formatter(FuncFormatter(format_ticks))
     ax.yaxis.set_major_formatter(FuncFormatter(format_ticks))
 
-    # Label axes and set fonts and padding
-    # ax.set_xlabel("Longitude (km)", fontsize=16, labelpad=15)
-    # ax.set_ylabel("Latitude (km)", fontsize=16, labelpad=15)
     # Maintain aspect ratio of the image
     ax.set_aspect('equal')
 
@@ -1111,7 +1100,6 @@ with rasterio.open(raster_path) as src:
     ax.set_xticks([])
     ax.set_yticks([])
 
-
     # Create and place a legend with custom formatting
     legend = ax.legend(
         handles=legend_elements,
@@ -1120,7 +1108,7 @@ with rasterio.open(raster_path) as src:
         frameon=False,
         fontsize=12,
         borderpad=1.2,
-        handletextpad=0.8,
+        handletextpad=2.0,
         columnspacing=2,
     )
 
@@ -1157,3 +1145,122 @@ print("Map saved successfully in the folder:", output_path)
 
     Map saved successfully in the folder: /content/drive/MyDrive/change-components/output_toydata/
     
+
+
+```python
+def plot_trajectory_distribution(output_path):
+    """
+    Generates trajectory distribution bar chart from raster data
+    with consistent styling and proper frame
+    """
+    # Path to trajectory raster
+    raster_path = os.path.join(output_path, 'trajectory.tif')
+
+    # Read raster data
+    with rasterio.open(raster_path) as src:
+        traj_data = src.read(1)
+        nodata = src.nodata
+
+    # Filter nodata values and count trajectories
+    masked_traj = np.ma.masked_where(traj_data == nodata, traj_data)
+    unique, counts = np.unique(masked_traj.compressed(), return_counts=True)
+    total_pixels = counts.sum()
+
+    # Calculate percentages
+    percentages = {k: (v/total_pixels)*100 for k, v in zip(unique, counts)}
+
+    # Print trajectory percentages
+    print("\nTrajectory Percentages:")
+    for traj, percentage in percentages.items():
+        print(f"Trajectory {traj}: {percentage:.2f}%")  # Format to 2 decimal places
+
+    # Define trajectories to show (4, 3, 2) and colors
+    ordered_trajs = [4, 3, 2]
+    colors = {
+        4: '#000066',  # Dark blue
+        3: '#cccc00',  # Gold
+        2: '#990033'   # Dark red
+    }
+
+    # Calculate maximum Y value (round up to nearest 10)
+    max_percentage = sum(percentages.get(traj, 0) for traj in ordered_trajs)
+    y_max = np.ceil(max_percentage / 10) * 10  # Round up to nearest 10
+
+    # Create figure with consistent styling
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    # Plot stacked bars
+    bottom = 0
+    for traj in ordered_trajs:
+        if traj in percentages:
+            ax.bar(0, percentages[traj],
+                  bottom=bottom,
+                  color=colors[traj],
+                  width=0.4,
+                  edgecolor='none')
+            bottom += percentages[traj]
+
+    # Formatting to match PDF style
+    ax.set_ylabel('Trajectory Area (% of western Bahia)',
+                 fontsize=16)
+    # ax.set_title('Trajectory Distribution',
+    #             fontsize=18)
+
+    # Configure frame (box) - all spines visible
+    for spine in ['top', 'right', 'bottom', 'left']:
+        ax.spines[spine].set_visible(True)
+        ax.spines[spine].set_color('black')
+        ax.spines[spine].set_linewidth(0.5)
+
+    # Remove minor ticks and configure major ticks
+    ax.tick_params(axis='y', which='minor', length=0)
+    ax.tick_params(axis='y', which='major',
+                  labelsize=18,
+                  length=6,
+                  width=1)
+
+    # Set dynamic Y-axis limits
+    ax.set_ylim(0, y_max)
+    ax.yaxis.set_major_locator(ticker.MultipleLocator(np.floor(y_max/5)))  # 5 nice intervals
+
+    ax.xaxis.set_visible(False)  # No x-axis as it's a single bar
+
+    # Remove grid lines
+    ax.grid(False)
+
+    # Legend
+    legend_elements = [
+        Patch(facecolor='#990033', label='Trajectory 2'),
+        Patch(facecolor='#cccc00', label='Trajectory 3'),
+        Patch(facecolor='#000066', label='Trajectory 4')
+    ]
+    ax.legend(handles=legend_elements,
+             loc='center left',
+             bbox_to_anchor=(1.05, 0.5),
+             fontsize=14,
+             frameon=False)
+
+    # Save and show
+    plt.tight_layout()
+    plt.savefig(os.path.join(output_path, 'graphic_trajectory_distribution.jpeg'),
+                dpi=300,
+                bbox_inches='tight')
+    plt.show()
+
+# Usage
+if __name__ == "__main__":
+    plot_trajectory_distribution(output_path)
+```
+
+    
+    Trajectory Percentages:
+    Trajectory 2: 16.67%
+    Trajectory 3: 66.67%
+    Trajectory 4: 16.67%
+    
+
+
+    
+![png](summarize_change_components_toydata_files/summarize_change_components_toydata_36_1.png)
+    
+
