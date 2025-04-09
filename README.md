@@ -25,6 +25,9 @@ This notebook summarizes the overall change and the class-level changes during t
 4. **Change Component Calculation:** Calculate the components of change Quantity, Allocation Exchange, Allocation Shift, Alternation Exchange, and Alternation Shift.
 6. **Trajectory Analysis:** Temporal pattern of  change observed in pixel data over a time series, categorized into four distinct types on the map.
 
+**Dataset:**
+The dataset used in this study is available in the Zenodo repository. You can access it [here](https://zenodo.org/records/15106894?preview=1&token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6IjY2NDVmMDQ1LTQ5ZDktNGNmYS1iMzY3LWE2Zjc5ZDk2MjMzYSIsImRhdGEiOnt9LCJyYW5kb20iOiJmZTdhMWUwNmI5MGU4Nzg5MzgxYWU4YzIxMjBjY2VmNSJ9.DJ6Kk4ytcEi6G00M7TgdpS6BkyXNeOOqd0f3pDcWjQP-epmuo0Vy-1t9-EewFI82lu1yrsaf0syk-L32XT3oJw).
+
 **Acknowledgements:**
 
 The United States National Aeronautical and Space Administration supported this work through the Land-Cover and Land-Use Change Mission Directorate via the grant 80NSSC23K0508 entitled ["Irrigation as climate-change adaptation in the Cerrado biome of Brazil evaluated with new quantitative methods, socio-economic analysis, and scenario models."](https://lcluc.umd.edu/projects/irrigation-climate-change-adaptation-cerrado-biome-brazil-evaluated-new-quantitative)
