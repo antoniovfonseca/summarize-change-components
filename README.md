@@ -939,148 +939,23 @@ ComponentVisualizer.plot_gain_loss_stacked(
 
 
 ```python
-@nb.njit(nogil=True, cache=True)
-def classify_pixel(pixel_series):
-    """Numba-optimized trajectory classification (20-50x faster)"""
-    if pixel_series[0] == 0:
-        return 0
-
-    start = pixel_series[0]
-    end = pixel_series[-1]
-    has_variation = False
-    direct_transition = False
-
-    # First pass: check all conditions in single loop
-    for i in range(len(pixel_series)-1):
-        current = pixel_series[i]
-        next_val = pixel_series[i+1]
-
-        # Check for any variation
-        if not has_variation and current != next_val:
-            has_variation = True
-
-        # Check for direct transition
-        if not direct_transition and current == start and next_val == end:
-            direct_transition = True
-
-    # Trajectory 1:
-    if not has_variation:
-        return 1
-
-    # Trajectory 2:
-    if start == end:
-        return 2
-
-    # Trajectory 3:
-    if direct_transition:
-        return 3
-
-    # Trajectory 4:
-    return 4
-
-@nb.njit(nogil=True, parallel=True)
-def process_stack_parallel(stack, height, width):
-    """Parallel processing of raster stack"""
-    result = np.zeros((height, width), dtype=np.uint8)
-
-    for y in nb.prange(height):
-        for x in range(width):
-            result[y, x] = classify_pixel(stack[:, y, x])
-
-    return result
-
-class TrajectoryAnalyzer:
-    @staticmethod
-    def process_rasters(output_path, suffix='_masked.tif'):
-        """Optimized raster processing with chunked loading"""
-        # Validate directory
-        os.makedirs(output_path, exist_ok=True)
-        if not os.path.isdir(output_path):
-            raise ValueError(f"Path must be a directory: {output_path}")
-
-        # Find input files
-        raster_files = sorted([
-            os.path.join(output_path, f)
-            for f in os.listdir(output_path)
-            if f.endswith(suffix)
-        ])
-        if not raster_files:
-            raise ValueError(f"No files found with suffix '{suffix}'")
-
-        # Load metadata
-        with rasterio.open(raster_files[0]) as src:
-            meta = src.meta
-            height, width = src.shape
-
-        # Process in memory-friendly chunks
-        chunk_size = 500
-        result = np.zeros((height, width),
-                          dtype=np.uint8)
-
-        for y_start in range(0, height, chunk_size):
-            y_end = min(y_start + chunk_size, height)
-            chunk_height = y_end - y_start
-
-            # Load chunk data
-            stack = np.zeros((len(raster_files),
-                              chunk_height,
-                              width),
-                             dtype=np.uint8)
-            for i, f in enumerate(raster_files):
-                with rasterio.open(f) as src:
-                    stack[i] = src.read(1, window=((y_start, y_end), (0, width)))
-
-            # Process chunk
-            result[y_start:y_end] = process_stack_parallel(stack,
-                                                           chunk_height,
-                                                           width)
-
-        # Save results
-        meta.update({
-            'dtype': 'uint8',
-            'nodata': 0,
-            'count': 1,
-            'compress': 'lzw'
-        })
-        output_file = os.path.join(output_path, 'trajectory.tif')
-        with rasterio.open(output_file, 'w', **meta) as dst:
-            dst.write(result, 1)
-
-        return output_file
-
-if __name__ == "__main__":
-    TrajectoryAnalyzer.process_rasters(output_path)
-    print(f"Processing complete! Results saved to: {output_path}")
-```
-
-    Processing complete! Results saved to: /content/drive/MyDrive/change-components/output_toydata/
-
-    
-<img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/README_figures/map_trajectories.jpeg" width="600" height="400">
-
-
-```python
 # Set the path for the input raster file using a predefined output directory
 raster_path = os.path.join(output_path, 'trajectory.tif')
 
 # Define the resolution (dots per inch) of the output image
 dpi = 300
 
-# Set a scale factor to maintain the size of the raster data as is
-scale_factor = 1
-
 # Define legend elements with custom labels and colors for different categories
 legend_elements = [
-    Rectangle((0, 0), 1, 1, facecolor='#d9d9d9', label='1: Start class matches end class while alternation = 0'),
-    Rectangle((0, 0), 1, 1, facecolor='#990033', label='2: Start class matches end class while alternation > 0'),
-    Rectangle((0, 0), 1, 1, facecolor='#cccc00', label='3: Start class differs from end class with transitions'),
-    Rectangle((0, 0), 1, 1, facecolor='#000066', label='4: Start class differs from end class with no transitions')
+    Rectangle((0, 0), 1, 1, facecolor='#d9d9d9', label='1:Start class matches end class while alternation = 0'),
+    Rectangle((0, 0), 1, 1, facecolor='#990033', label='2:Start class matches end class while alternation > 0'),
+    Rectangle((0, 0), 1, 1, facecolor='#cccc00', label='3:Start class differs from end class while at least one \ntime interval transitions from start class to end class'),
+    Rectangle((0, 0), 1, 1, facecolor='#000066', label='4:Start class differs from end class while no time \ninterval transitions from start class to end class')
 ]
 
 # Define a custom color map for visualizing the raster data
 cmap = ListedColormap([
-    '#FFFFFF',  # Background or no data
-    '#d9d9d9',  # Trajectory 1
+    # '#d9d9d9',  # Trajectory 1
     '#990033',  # Trajectory 2
     '#cccc00',  # Trajectory 3
     '#000066',  # Trajectory 4
@@ -1088,18 +963,8 @@ cmap = ListedColormap([
 
 # Open the raster file using rasterio
 with rasterio.open(raster_path) as src:
-    # Read and resize the raster data based on the scale factor
-    data = src.read(
-        1,
-        out_shape=(int(src.height * scale_factor), int(src.width * scale_factor)),
-        resampling=rasterio.enums.Resampling.nearest
-    )
-
-    # Adjust the transformation of the raster data to match the new dimensions
-    transform = src.transform * src.transform.scale(
-        (src.width / data.shape[1]),
-        (src.height / data.shape[0])
-    )
+    # Read the raster data at original resolution
+    data = src.read(1)
 
     # Store original transformation settings
     original_transform = src.transform
@@ -1125,9 +990,6 @@ with rasterio.open(raster_path) as src:
     ax.xaxis.set_major_formatter(FuncFormatter(format_ticks))
     ax.yaxis.set_major_formatter(FuncFormatter(format_ticks))
 
-    # Label axes and set fonts and padding
-    # ax.set_xlabel("Longitude (km)", fontsize=16, labelpad=15)
-    # ax.set_ylabel("Latitude (km)", fontsize=16, labelpad=15)
     # Maintain aspect ratio of the image
     ax.set_aspect('equal')
 
@@ -1149,7 +1011,6 @@ with rasterio.open(raster_path) as src:
     ax.set_xticks([])
     ax.set_yticks([])
 
-
     # Create and place a legend with custom formatting
     legend = ax.legend(
         handles=legend_elements,
@@ -1158,7 +1019,7 @@ with rasterio.open(raster_path) as src:
         frameon=False,
         fontsize=12,
         borderpad=1.2,
-        handletextpad=0.8,
+        handletextpad=2.0,
         columnspacing=2,
     )
 
@@ -1186,6 +1047,123 @@ plt.close()
 # Print a confirmation message when the map is completed
 print("Map saved successfully in the folder:", output_path)
 ```
+
+    Processing complete! Results saved to: /content/drive/MyDrive/change-components/output_toydata/
+
+    
+<img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/README_figures/map_trajectories.jpeg" width="600" height="400">
+
+
+```python
+def plot_trajectory_distribution(output_path):
+    """
+    Generates trajectory distribution bar chart from raster data
+    with consistent styling and proper frame
+    """
+    # Path to trajectory raster
+    raster_path = os.path.join(output_path, 'trajectory.tif')
+
+    # Read raster data
+    with rasterio.open(raster_path) as src:
+        traj_data = src.read(1)
+        nodata = src.nodata
+
+    # Filter nodata values and count trajectories
+    masked_traj = np.ma.masked_where(traj_data == nodata, traj_data)
+    unique, counts = np.unique(masked_traj.compressed(), return_counts=True)
+    total_pixels = counts.sum()
+
+    # Calculate percentages
+    percentages = {k: (v/total_pixels)*100 for k, v in zip(unique, counts)}
+
+    # Print trajectory percentages
+    print("\nTrajectory Percentages:")
+    for traj, percentage in percentages.items():
+        print(f"Trajectory {traj}: {percentage:.2f}%")  # Format to 2 decimal places
+
+    # Define trajectories to show (4, 3, 2) and colors
+    ordered_trajs = [4, 3, 2]
+    colors = {
+        4: '#000066',  # Dark blue
+        3: '#cccc00',  # Gold
+        2: '#990033'   # Dark red
+    }
+
+    # Calculate maximum Y value (round up to nearest 10)
+    max_percentage = sum(percentages.get(traj, 0) for traj in ordered_trajs)
+    y_max = np.ceil(max_percentage / 10) * 10  # Round up to nearest 10
+
+    # Create figure with consistent styling
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    # Plot stacked bars
+    bottom = 0
+    for traj in ordered_trajs:
+        if traj in percentages:
+            ax.bar(0, percentages[traj],
+                  bottom=bottom,
+                  color=colors[traj],
+                  width=0.4,
+                  edgecolor='none')
+            bottom += percentages[traj]
+
+    # Formatting to match PDF style
+    ax.set_ylabel('Trajectory Area (% of western Bahia)',
+                 fontsize=16)
+    # ax.set_title('Trajectory Distribution',
+    #             fontsize=18)
+
+    # Configure frame (box) - all spines visible
+    for spine in ['top', 'right', 'bottom', 'left']:
+        ax.spines[spine].set_visible(True)
+        ax.spines[spine].set_color('black')
+        ax.spines[spine].set_linewidth(0.5)
+
+    # Remove minor ticks and configure major ticks
+    ax.tick_params(axis='y', which='minor', length=0)
+    ax.tick_params(axis='y', which='major',
+                  labelsize=18,
+                  length=6,
+                  width=1)
+
+    # Set dynamic Y-axis limits
+    ax.set_ylim(0, y_max)
+    ax.yaxis.set_major_locator(ticker.MultipleLocator(np.floor(y_max/5)))  # 5 nice intervals
+
+    ax.xaxis.set_visible(False)  # No x-axis as it's a single bar
+
+    # Remove grid lines
+    ax.grid(False)
+
+    # Legend
+    legend_elements = [
+        Patch(facecolor='#990033', label='Trajectory 2'),
+        Patch(facecolor='#cccc00', label='Trajectory 3'),
+        Patch(facecolor='#000066', label='Trajectory 4')
+    ]
+    ax.legend(handles=legend_elements,
+             loc='center left',
+             bbox_to_anchor=(1.05, 0.5),
+             fontsize=14,
+             frameon=False)
+
+    # Save and show
+    plt.tight_layout()
+    plt.savefig(os.path.join(output_path, 'graphic_trajectory_distribution.jpeg'),
+                dpi=300,
+                bbox_inches='tight')
+    plt.show()
+
+# Usage
+if __name__ == "__main__":
+    plot_trajectory_distribution(output_path)
+```
+
+    
+    Trajectory Percentages:
+    Trajectory 2: 16.67%
+    Trajectory 3: 66.67%
+    Trajectory 4: 16.67%
 
 <img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/README_figures/graphic_trajectory_distribution.jpeg" width="500" height="400">
 
