@@ -336,18 +336,18 @@ plot_rasters_auto(image_paths, class_labels_dict, years)
     
 <img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/README_figures/map_input.jpeg" width="400" height="500">
 
-## **3.Generate the Confusion Matrix**
+## **3.Generate the Transition Matrix**
 
 
 ---
 
 
 
-In this section, the computer code will generate three confusion matrix. The first one is relate to each time interval. The second one is the confusion matrix for the temporal extent, which is represented for the first and last time point of the time extent. The last one is a confusion matrix that represents the sum of all time intervals.
+In this section, the computer code will generate three transition matrices. The first one is related to each time interval. The second one is the transition matrix for the temporal extent, which is represented for the first and last time point of the time extent. The last one is a transition matrix that represents the sum of all time intervals.
 
-Before generate the confusion matrix, the computer code will analyze the presence of 0, NULL and NA value in all maps. If there is a presence of one of these values, the computer code will create a mask with these values and will remove all the pixels in the same position in all maps and years.
+Before generating the transition matrix, the computer code will analyze the presence of 0, NULL, and NA values in all maps. If there is a presence of one of these values, the computer code will create a mask with these values and will remove all the pixels in the same position in all maps and years.
 
-All the confusion matrix will be salved in the Google Drive in the ".csv" format.
+All the transition matrices will be saved in the Google Drive in the ".csv" format.
 
 
 
@@ -388,6 +388,8 @@ def generate_mask_and_flatten_rasters(output_path, suffix='_masked.tif'):
     return [data[~combined_mask].flatten() if np.any(combined_mask)
             else data.flatten() for data in all_data]
 
+transition_matrix = confusion_matrix
+
 def generate_all_matrices(output_path, suffix='_masked.tif'):
     """Generate all required matrices and save to CSV"""
     # Get processed data
@@ -400,38 +402,38 @@ def generate_all_matrices(output_path, suffix='_masked.tif'):
 
     # Generate interval matrices
     for i in range(len(flattened_data)-1):
-        cm = confusion_matrix(flattened_data[i],
+        cm = transition_matrix(flattened_data[i],
                               flattened_data[i+1],
                               labels=all_classes)
         pd.DataFrame(cm,
                      index=all_classes,
                      columns=all_classes
         ).to_csv(os.path.join(output_path,
-                              f'confusion_matrix_{years[i]}-{years[i+1]}.csv'))
+                              f'transition_matrix_{years[i]}-{years[i+1]}.csv'))
 
     # Generate extent matrix
-    extent_matrix = confusion_matrix(flattened_data[0],
+    extent_matrix = transition_matrix(flattened_data[0],
                                      flattened_data[-1],
                                      labels=all_classes)
     pd.DataFrame(extent_matrix,
                  index=all_classes,
                  columns=all_classes
     ).to_csv(os.path.join(output_path,
-                          f'confusion_matrix_extent_{years[0]}-{years[-1]}.csv'))
+                          f'transition_matrix_extent_{years[0]}-{years[-1]}.csv'))
 
     # Generate sum matrix
     sum_matrix = np.zeros((len(all_classes),
                            len(all_classes)),
                           dtype=int)
     for i in range(len(flattened_data)-1):
-        sum_matrix += confusion_matrix(flattened_data[i],
+        sum_matrix += transition_matrix(flattened_data[i],
                                        flattened_data[i+1],
                                        labels=all_classes)
     pd.DataFrame(sum_matrix,
                  index=all_classes,
                  columns=all_classes
     ).to_csv(os.path.join(output_path,
-                          f'confusion_matrix_sum_{years[0]}-{years[-1]}.csv'))
+                          f'transition_matrix_sum_{years[0]}-{years[-1]}.csv'))
 
     # Generate alternation matrix
     alternation_matrix = sum_matrix - extent_matrix
@@ -439,7 +441,7 @@ def generate_all_matrices(output_path, suffix='_masked.tif'):
                  index=all_classes,
                  columns=all_classes
     ).to_csv(os.path.join(output_path,
-                          f'confusion_matrix_alternation_{years[0]}-{years[-1]}.csv'))
+                          f'transition_matrix_alternation_{years[0]}-{years[-1]}.csv'))
 
     return years, all_classes
 
@@ -449,7 +451,7 @@ def main(output_path):
     os.makedirs(output_path, exist_ok=True)
 
     # Generate all matrices
-    print("Generating confusion matrices...")
+    print("Generating transition matrices...")
     years, all_classes = generate_all_matrices(output_path)
 
     # print(f"Generated matrices for {len(years)} time points")
@@ -460,7 +462,7 @@ if __name__ == "__main__":
     main(output_path)
 ```
 
-    Generating confusion matrices...
+    Generating transition matrices...
     Detected classes: [1 2 3]
     Matrices saved in: /content/drive/MyDrive/change-components/output_toydata/
     
@@ -470,18 +472,18 @@ if __name__ == "__main__":
 
 ---
 
-The code calculates components of change from confusion matrices generetaed in the previous step. It features a ComponentCalculator class that processes matrices to determine the gain and loss of quantity, the exchanges, and shifts. The process_matrix function handles matrices for defined time intervals and the main function systematically processes these matrices for each time slice, aggregates the results, and exports the outcomes to a CSV file.
+The code calculates components of change from transition matrices generated in the previous step. It features a ComponentCalculator class that processes matrices to determine the gain and loss of quantity, the exchanges, and shifts. The process_matrix function handles matrices for defined time intervals, and the main function systematically processes these matrices for each time slice, aggregates the results, and exports the outcomes to a CSV file.
 
 
 ```python
 class ComponentCalculator:
-    def __init__(self, confusion_matrix):
+    def __init__(self, transition_matrix):
       """
-      Initialize with a confusion matrix, convert data types, and set up
+      Initialize with a transition matrix, convert data types, and set up
       structure for class components
       """
-      self.matrix = confusion_matrix.astype(int)
-      self.num_classes = confusion_matrix.shape[0]
+      self.matrix = transition_matrix.astype(int)
+      self.num_classes = transition_matrix.shape[0]
       self.class_components = []
       self.total_components = {
           'Quantity_Gain': 0, 'Quantity_Loss': 0,
@@ -491,7 +493,7 @@ class ComponentCalculator:
 
     def calculate_components(self):
       """
-      Calculate change components for each class based on the confusion matrix
+      Calculate change components for each class based on the transition matrix
       """
       for class_idx in range(self.num_classes):
           gain_sum = np.sum(self.matrix[:, class_idx])
@@ -525,11 +527,11 @@ def process_matrix(matrix_type):
     try:
         # Determine file name based on matrix type and load data
         if matrix_type == 'extent':
-            fname = f'confusion_matrix_extent_{years[0]}-{years[-1]}.csv'
+            fname = f'transition_matrix_extent_{years[0]}-{years[-1]}.csv'
         elif matrix_type == 'sum':
-            fname = f'confusion_matrix_sum_{years[0]}-{years[-1]}.csv'
+            fname = f'transition_matrix_sum_{years[0]}-{years[-1]}.csv'
         else:
-            fname = f'confusion_matrix_{matrix_type}.csv'
+            fname = f'transition_matrix_{matrix_type}.csv'
 
         df = pd.read_csv(os.path.join(output_path, fname), index_col=0)
         calc = ComponentCalculator(df.values).calculate_components()
@@ -572,7 +574,7 @@ def main(output_path):
     try:
         alternation_matrix = pd.read_csv(
             os.path.join(output_path,
-                         f'confusion_matrix_alternation_{years[0]}-{years[-1]}.csv'),
+                         f'transition_matrix_alternation_{years[0]}-{years[-1]}.csv'),
             index_col=0
         ).values.astype(int)
 
