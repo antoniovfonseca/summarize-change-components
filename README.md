@@ -21,9 +21,12 @@ This notebook summarizes the overall change and the class-level changes during t
 **Notebook Outline:**
 1. **Environment Setup:** Install required packages, import libraries, mount Google Drive, and set input/output paths.
 2. **Data Preparation:** Define the years, class dictionary, and load and mask raster files.
-3. **Confusion Matrix Generation:** Interval matrices, Extent matrix, Sum matrix, and Alternation matrix.
+3. **Transition Matrix Generation:** Interval matrices, Extent matrix, Sum matrix, and Alternation matrix.
 4. **Change Component Calculation:** Calculate the components of change Quantity, Allocation Exchange, Allocation Shift, Alternation Exchange, and Alternation Shift.
 6. **Trajectory Analysis:** Temporal pattern of  change observed in pixel data over a time series, categorized into four distinct types on the map.
+
+🌍 **Launch the interactive dashboard here:**  
+👉 [https://huggingface.co/spaces/antoniovicgf/change-components-dashboard](https://huggingface.co/spaces/antoniovicgf/change-components-dashboard)
 
 **Dataset:**
 
