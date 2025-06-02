@@ -24,6 +24,7 @@ This notebook summarizes the overall change and the class-level changes during t
 3. **Transition Matrix Generation:** Interval matrices, Extent matrix, Sum matrix, and Alternation matrix.
 4. **Change Component Calculation:** Calculate the components of change Quantity, Allocation Exchange, Allocation Shift, Alternation Exchange, and Alternation Shift.
 6. **Trajectory Analysis:** Temporal pattern of  change observed in pixel data over a time series, categorized into four distinct types on the map.
+7. **Number of Changes Analysis:** Calculate the number of pixels that change category and create a raster map that shows the total number of changes for each pixel throughout the time series.
 
 🌍 **Launch the interactive dashboard here:**  
 👉 [https://huggingface.co/spaces/antoniovicgf/change-components-dashboard](https://huggingface.co/spaces/antoniovicgf/change-components-dashboard)
