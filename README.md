@@ -1356,6 +1356,4 @@ plt.close()
 
 print(f"Visualization saved to {output_file}")
 ```
-<img src="https://raw.https://github.com/antoniovfonseca/summarize-change-components/blob/main/README_figures/pixel_change_map.jpeg" width="600" height="400">
-    
-
+<img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/README_figures/pixel_change_map.jpeg" width="600" height="400">
