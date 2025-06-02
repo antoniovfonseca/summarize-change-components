@@ -50,12 +50,13 @@ The United States National Aeronautical and Space Administration supported this 
    cd summarize-change-components
 
 2. **Create and activate a virtual environment**
-   ```bash
    On Windows:
+   ```bash
    python -m venv venv
    venv\Scripts\activate
-
+   ```
    On Linux/macOS:
+   ```bash
    python3 -m venv venv
    source venv/bin/activate
 
@@ -64,9 +65,11 @@ The United States National Aeronautical and Space Administration supported this 
    pip install -r requirements.txt
 
 6. **Install JupyterLab (if you do not have it yet)**
+   ```bash
    pip install jupyterlab
 
-7. **Launch JupyterLab**
+8. **Launch JupyterLab**
+   ```bash
    jupyter lab
 ---
 ## **Example Data**
