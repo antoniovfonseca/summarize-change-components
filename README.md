@@ -50,23 +50,22 @@ The United States National Aeronautical and Space Administration supported this 
    cd summarize-change-components
 
 2. **Create and activate a virtual environment**
+   On Windows:
+   python -m venv venv
+   venv\Scripts\activate
 
-On Windows:
-python -m venv venv
-venv\Scripts\activate
-
-On Linux/macOS:
-python3 -m venv venv
-source venv/bin/activate
+   On Linux/macOS:
+   python3 -m venv venv
+   source venv/bin/activate
 
 3. **Install the required dependencies**
-pip install -r requirements.txt
+   pip install -r requirements.txt
 
 4. **Install JupyterLab (if you do not have it yet)**
-pip install jupyterlab
+   pip install jupyterlab
 
 5. **Launch JupyterLab**
-jupyter lab
+   jupyter lab
 ---
 ## **Example Data**
 
