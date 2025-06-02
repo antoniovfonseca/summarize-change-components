@@ -24,6 +24,7 @@ This notebook summarizes the overall change and the class-level changes during t
 3. **Transition Matrix Generation:** Interval matrices, Extent matrix, Sum matrix, and Alternation matrix.
 4. **Change Component Calculation:** Calculate the components of change Quantity, Allocation Exchange, Allocation Shift, Alternation Exchange, and Alternation Shift.
 6. **Trajectory Analysis:** Temporal pattern of  change observed in pixel data over a time series, categorized into four distinct types on the map.
+7. **Number of Changes Analysis:** Calculate the number of pixels that change category and create a raster map that shows the total number of changes for each pixel throughout the time series.
 
 🌍 **Launch the interactive dashboard here:**  
 👉 [https://huggingface.co/spaces/antoniovicgf/change-components-dashboard](https://huggingface.co/spaces/antoniovicgf/change-components-dashboard)
@@ -1176,6 +1177,184 @@ if __name__ == "__main__":
 
 <img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/README_figures/graphic_trajectory_distribution.jpeg" width="500" height="400">
 
+```python
+def count_pixel_changes(image_stack: np.ndarray) -> np.ndarray:
+    """
+    Counts the number of pixel value changes across a temporal image series.
 
-    
+    Args:
+        image_stack: 3D numpy array in (time, height, width) format
 
+    Returns:
+        2D array with total change count per pixel
+    """
+    # Create shifted versions of the time series
+    shifted = image_stack[1:]   # T1 ... Tn
+    original = image_stack[:-1] # T0 ... Tn-1
+
+    # Detect changes between consecutive time points
+    changes = shifted != original
+
+    # Sum changes across all time intervals
+    return np.sum(changes, axis=0)
+
+# Use existing input/output directories from notebook setup
+print(f"Input directory: {image_paths}")
+print(f"Output directory: {output_path}")
+
+# List and sort temporal image files
+# Convert each path in image_paths to a Path object before sorting
+image_files = sorted([Path(p) for p in image_paths])
+
+if not image_files:
+    raise ValueError("No TIFF images found in input directory")
+
+print(f"Found {len(image_files)} temporal images")
+
+# Load image stack and process in chunks
+# Get dimensions from the first image
+with rasterio.open(image_files[0]) as src:
+    height, width = src.shape
+    meta = src.meta.copy()
+
+chunk_size = 500 # Process in chunks to manage memory
+change_count_result = np.zeros((height, width), dtype=np.uint8)
+
+for y_start in tqdm(range(0, height, chunk_size), desc="Processing chunks"):
+    y_end = min(y_start + chunk_size, height)
+    chunk_height = y_end - y_start
+
+    # Load chunk data for all images
+    image_stack_chunk = np.zeros((len(image_files), chunk_height, width), dtype=np.uint8)
+    for i, image_file in enumerate(image_files):
+        with rasterio.open(image_file) as src:
+            image_stack_chunk[i] = src.read(1, window=((y_start, y_end), (0, width)))
+
+    # Calculate changes for the current chunk
+    change_count_chunk = count_pixel_changes(image_stack_chunk)
+
+    # Store results
+    change_count_result[y_start:y_end] = change_count_chunk
+
+# Save the result
+output_dir_path = Path(output_path) # Convert output_path string to Path object
+output_file = output_dir_path / 'pixel_change_count.tif'
+meta.update({
+    'dtype': 'uint8',
+    'count': 1,
+    'compress': 'lzw',
+    'nodata': 255 # Assuming 255 can be used as nodata for change count
+})
+
+# Load the existing pixel change count raster
+change_count_path = os.path.join(output_path, 'pixel_change_count.tif')
+
+with rasterio.open(change_count_path) as src:
+    change_count_result = src.read(1)
+    transform = src.transform
+    bounds = src.bounds
+    left, bottom, right, top = bounds
+    height, width = change_count_result.shape
+
+# Define visualization parameters
+palette = [
+    '#c2d6d6',  # 0 changes
+    '#009933',   # 1 change
+    '#ffffbf',   # 2 changes
+    '#fdae61',   # 3 changes
+    '#d7191c',   # 4 changes
+    '#c51b7d',   # 5 changes
+    '#313695'    # 6+ changes
+]
+
+# Create custom colormap
+max_changes = change_count_result.max()
+n_colors = min(max_changes + 1, len(palette))
+cmap = ListedColormap(palette[:n_colors])
+
+# Create figure with appropriate size
+dpi = 300
+fig, ax = plt.subplots(figsize=(4, 4), dpi=dpi)
+
+# Display the raster with correct georeferencing
+img = ax.imshow(
+    change_count_result,
+    cmap=cmap,
+    extent=[left, right, bottom, top],
+    vmin=0,
+    vmax=n_colors-1,
+    interpolation='none'
+)
+
+# Add black borders to each pixel
+for i in range(height):
+    for j in range(width):
+        # Calculate pixel coordinates
+        x = left + j * transform.a
+        y = top - (i + 1) * abs(transform.e)  # Adjust for top-left origin
+        
+        # Create rectangle for pixel border
+        rect = Rectangle(
+            (x, y), 
+            transform.a, 
+            abs(transform.e),  # Pixel height
+            fill=False,
+            edgecolor='black',
+            linewidth=1
+        )
+        ax.add_patch(rect)
+
+# Remove axis completely
+ax.set_axis_off()
+
+# Set title following reference layout
+plt.title("Pixel Change Count Across Time Series", 
+          fontsize=16, pad=20, loc='center')
+
+# Create legend elements following reference format
+legend_elements = []
+for i in range(n_colors):
+    legend_elements.append(
+        Rectangle((0, 0), 1, 1, facecolor=palette[i], 
+                 label=f'{i} change{"s" if i != 1 else ""}')
+    )
+
+# Add legend for values above the palette range
+if max_changes >= len(palette):
+    legend_elements.append(
+        Rectangle((0, 0), 1, 1, facecolor=palette[-1], 
+                 label=f'{len(palette)-1}+ changes')
+    )
+
+# Add legend outside the plot (right side)
+legend = ax.legend(
+    handles=legend_elements,
+    loc='center left',
+    bbox_to_anchor=(1.05, 0.5),
+    frameon=False,
+    fontsize=12,
+    title='Number of Changes',
+    title_fontsize=14
+)
+
+# Save the visualization following reference style
+output_file = os.path.join(
+    output_path,
+    'pixel_change_map.jpeg'
+    )
+plt.savefig(
+    output_file,
+    dpi=dpi,
+    bbox_inches='tight',
+    pad_inches=0.3,
+    pil_kwargs={
+        'optimize': True,
+        'quality': 100}
+)
+
+plt.show()
+plt.close()
+
+print(f"Visualization saved to {output_file}")
+```
+<img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/README_figures/pixel_change_map.jpeg" width="500" height="400">
