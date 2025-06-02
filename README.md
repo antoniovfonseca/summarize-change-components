@@ -42,6 +42,32 @@ The United States National Aeronautical and Space Administration supported this 
           <img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/logos/clark_logo_horizontal.png" width="150" height="70">
 
 ---
+## Quickstart: Run Locally on Your Computer
+
+1. **Clone the repository**  
+   ```bash
+   git clone https://github.com/antoniovfonseca/summarize-change-components.git
+   cd summarize-change-components
+
+2. **Create and activate a virtual environment**
+
+On Windows:
+python -m venv venv
+venv\Scripts\activate
+
+On Linux/macOS:
+python3 -m venv venv
+source venv/bin/activate
+
+3. **Install the required dependencies**
+pip install -r requirements.txt
+
+4. **Install JupyterLab (if you do not have it yet)**
+pip install jupyterlab
+
+5. **Launch JupyterLab**
+jupyter lab
+---
 ## **Example Data**
 
 ## **1.Enviroment Setup**
