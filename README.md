@@ -26,7 +26,7 @@ This notebook summarizes the overall change and the class-level changes during t
 6. **Trajectory Analysis:** Temporal pattern of  change observed in pixel data over a time series, categorized into four distinct types on the map.
 7. **Number of Changes Analysis:** Calculate the number of pixels that change category and create a raster map that shows the total number of changes for each pixel throughout the time series.
 
-🌍 **Launch the interactive dashboard here:**  
+🌍 **Launch the interactive dashboard here (we recommend using Google Chrome browser):**  
 👉 [https://huggingface.co/spaces/antoniovicgf/change-components-dashboard](https://huggingface.co/spaces/antoniovicgf/change-components-dashboard)
 
 **Dataset:**
