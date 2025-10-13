@@ -50,19 +50,16 @@ The United States National Aeronautical and Space Administration supported this 
    cd summarize-change-components
 
 2. **Create and activate a virtual environment**
-   On Windows:
    ```bash
-   python -m venv venv
-   venv\Scripts\activate
+   conda env create -f environment.yml
+   # or, with mamba:
+   # mamba env create -f environment.yml
    ```
-   On Linux/macOS:
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
 
-4. **Install the required dependencies**
+3. **Activate environment**
    ```bash
-   pip install -r requirements.txt
+   conda activate summarize-change
+   ```
 
 6. **Install JupyterLab (if you do not have it yet)**
    ```bash
