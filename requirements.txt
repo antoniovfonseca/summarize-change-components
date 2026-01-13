@@ -1,9 +1,0 @@
-numpy
-pandas
-xlsxwriter
-rasterio
-matplotlib
-matplotlib-scalebar
-matplotlib-map-utils
-scikit-learn
-tqdm
