@@ -309,7 +309,7 @@ def process_and_plot_pixel_counts(
     years,
     class_labels_dict,
     output_dir,
-    noData_value=0,
+    noData_value,
 ):
     """
     Processes raster images to count pixels per class, plots a stacked bar chart
@@ -325,7 +325,7 @@ def process_and_plot_pixel_counts(
         output_dir (str):
             Directory path where the output plot and CSV will be saved.
         noData_value (int, optional):
-            Pixel value to be treated as NoData. Defaults to 0.
+            Pixel value to be treated as NoData (Required).
 
     Returns:
         pd.DataFrame:
