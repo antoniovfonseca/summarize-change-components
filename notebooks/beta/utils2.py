@@ -280,7 +280,8 @@ def plot_classified_images(
     
     north_arrow(
         axes[n_images - 1], 
-        location="upper left"
+        location="upper left",
+        rotation=0
     )
 
     # Save figure
