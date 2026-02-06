@@ -19,6 +19,8 @@ from pyproj import Geod, Transformer
 from rasterio.enums import Resampling
 from matplotlib_scalebar.scalebar import ScaleBar
 from matplotlib_map_utils import north_arrow
+from matplotlib.colors import ListedColormap, BoundaryNorm
+from matplotlib.patches import Rectangle
 
 # =============================================================================
 # FILE AND DIRECTORY MANAGEMENT
