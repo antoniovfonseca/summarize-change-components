@@ -76,7 +76,7 @@ def get_ordered_annual_rasters(directory):
     sorted_years = sorted(year_map.keys())
     ordered_files = [year_map[year] for year in sorted_years]
 
-    print(f"Success: {len(ordered_files)} files found and sorted chronologically.")
+    print(f"Success: {len(ordered_files)} raster maps found and sorted chronologically.")
     return ordered_files, sorted_years
 
 # =============================================================================
