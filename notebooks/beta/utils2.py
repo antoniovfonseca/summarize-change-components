@@ -42,17 +42,17 @@ def setup_directories(output_path):
 
 def get_ordered_annual_rasters(directory):
     """
-    Finds annual .tif files in a directory, validates for duplicates, 
-    and returns them sorted by year.
+    Finds annual .tif files, extracts the year from filenames (even with prefixes),
+    validates for duplicates, and returns sorted paths and years.
 
     Args:
         directory (str): Path to the folder containing the .tif files.
 
     Returns:
-        list: Sorted list of file paths based on the year extracted from the filename.
+        tuple: (list of sorted file paths, list of sorted years)
     """
-    # Regex to find exactly 4 digits followed by .tif (e.g., 1985.tif)
-    pattern = re.compile(r"(\d{4})\.tif$")
+    # Regex to find 4 digits anywhere in the filename before .tif
+    pattern = re.compile(r"(\d{4})")
     files = glob.glob(os.path.join(directory, "*.tif"))
     
     year_map = {}
@@ -67,15 +67,15 @@ def get_ordered_annual_rasters(directory):
                 year_map[year] = f
 
     if not year_map:
-        print(f"Error: No files matching pattern XXXX.tif found in: {directory}")
-        return []
+        print(f"Error: No files with a 4-digit year found in: {directory}")
+        return [], []
 
-    # Sort years and create the list of paths in the correct sequence
+    # Sort by year
     sorted_years = sorted(year_map.keys())
     ordered_files = [year_map[year] for year in sorted_years]
 
     print(f"Success: {len(ordered_files)} files found and sorted chronologically.")
-    return ordered_files
+    return ordered_files, sorted_years
 
 # =============================================================================
 # RASTER DATA PROCESSING
