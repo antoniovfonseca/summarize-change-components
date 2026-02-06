@@ -301,3 +301,154 @@ def plot_classified_images(
     plt.show()
     plt.close()
 
+# =============================================================================
+# QUANTITATIVE ANALYSIS
+# =============================================================================
+def process_and_plot_pixel_counts(
+    image_paths,
+    years,
+    class_labels_dict,
+    output_dir,
+    noData_value=0,
+):
+    """
+    Processes raster images to count pixels per class, plots a stacked bar chart,
+    and exports the results to a CSV file.
+
+    This function iterates over a time series of raster images, calculates the
+    area (pixel count) for each land cover class, and generates a stacked bar
+    chart to visualize the temporal evolution. It also saves the raw pixel
+    counts to a CSV file.
+
+    Args:
+        image_paths (list):
+            List of file paths to the raster images. Must be sorted chronologically.
+        years (list):
+            List of years corresponding to the images. Length must match image_paths.
+        class_labels_dict (dict):
+            Dictionary mapping class IDs (int) to metadata (dict).
+            Must contain "name" (str) and "color" (hex str) keys.
+        output_dir (str):
+            Directory path where the output plot (PNG) and data (CSV) will be saved.
+        noData_value (int, optional):
+            The pixel value representing "No Data" to be excluded from analysis.
+            Defaults to 0.
+
+    Returns:
+        pd.DataFrame:
+            A pandas DataFrame containing the pivot table of pixel counts,
+            indexed by Year and columns by ClassName.
+    """
+    # 1. Validate inputs
+    if len(image_paths) != len(years):
+        raise ValueError(
+            f"Input mismatch: {len(image_paths)} images vs {len(years)} years."
+        )
+
+    records = []
+
+    # 2. Iterate through each year
+    for year, path in zip(years, image_paths):
+        with rasterio.open(path) as src:
+            data = src.read(1)
+
+        values, counts = np.unique(
+            data,
+            return_counts=True,
+        )
+
+        for value, count in zip(values, counts):
+            value = int(value)
+            
+            if value == noData_value:
+                continue
+            
+            if value not in class_labels_dict:
+                continue
+
+            records.append(
+                {
+                    "Year": year,
+                    "ClassID": value,
+                    "ClassName": class_labels_dict[value]["name"],
+                    "Pixels": int(count)
+                }
+            )
+
+    # 3. Create DataFrame
+    df_pixels = pd.DataFrame(records)
+    
+    pivot_pixels = (
+        df_pixels.pivot_table(
+            index="Year",
+            columns="ClassName",
+            values="Pixels",
+            aggfunc="sum",
+        )
+        .fillna(0)
+        .astype(int)
+    )
+
+    years_array = pivot_pixels.index.values
+
+    # 4. Determine Y-axis scaling
+    max_val = pivot_pixels.to_numpy().max()
+    
+    if max_val >= 1_000_000:
+        scale_factor = 1_000_000
+        y_label = "Area (million pixels)"
+    elif max_val >= 1_000:
+        scale_factor = 1_000
+        y_label = "Area (thousand pixels)"
+    else:
+        scale_factor = 1
+        y_label = "Area (pixels)"
+
+    pivot_scaled = pivot_pixels / scale_factor
+
+    # 5. Prepare Sorting Logic for Stacked Plot
+    first_year = years_array[0]
+    last_year = years_array[-1]
+    net_change = (
+        pivot_scaled.loc[last_year] - pivot_scaled.loc[first_year]
+    )
+    
+    classes_sorted = net_change.sort_values(ascending=False).index.tolist()
+
+    # 6. Generate Stacked Bar Chart
+    fig, ax = plt.subplots(figsize=(12, 6))
+    
+    # Map names back to colors
+    name_to_color = {
+        v["name"]: v["color"] 
+        for k, v in class_labels_dict.items()
+    }
+    
+    pivot_scaled[classes_sorted].plot(
+        kind="bar", 
+        stacked=True, 
+        ax=ax, 
+        color=[name_to_color[c] for c in classes_sorted],
+        width=0.9
+    )
+
+    # 7. Configure Axes
+    ax.set_ylabel(y_label, fontsize=14)
+    ax.set_xlabel("Year", fontsize=14)
+    ax.set_title("Land Cover Evolution (Pixel Counts)", fontsize=16)
+    
+    plt.xticks(rotation=45, ha='right')
+    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', frameon=False)
+    plt.tight_layout()
+
+    # 8. Save Outputs
+    out_img = os.path.join(output_dir, "graph_pixel_counts.png")
+    out_csv = os.path.join(output_dir, "table_pixel_counts.csv")
+    
+    plt.savefig(out_img, dpi=300, bbox_inches="tight")
+    pivot_pixels.to_csv(out_csv)
+    
+    plt.show() 
+    plt.close()
+
+    return pivot_pixels
