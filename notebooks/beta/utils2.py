@@ -146,9 +146,10 @@ def plot_classified_images(
         output_path (str): 
             Directory where the figure will be saved.
         image_paths_arg (list, optional): 
-            List of specific raster paths. Defaults to None.
+            List of specific raster paths. If None, looks in output_path/input_rasters.
+            Defaults to None.
         downsample_divisor (int, optional): 
-            Factor to reduce image size for display. Defaults to 1.
+            Factor to reduce image size for display speed. Defaults to 1.
         panel_size (tuple, optional): 
             Width and height for each subplot. Defaults to (4.0, 6.0).
         dx_km (float, optional): 
@@ -162,7 +163,7 @@ def plot_classified_images(
             Saves a PNG figure to disk and displays the plot.
     """
 
-    # Resolve input raster paths
+    # 1. Resolve input raster paths
     if (
         image_paths_arg and 
         isinstance(image_paths_arg, (list, tuple)) and 
@@ -175,7 +176,7 @@ def plot_classified_images(
             glob.glob(os.path.join(input_dir, "*.tif"))
         )
 
-    # Configure subplot grid
+    # 2. Configure subplot grid
     n_images = len(image_paths)
     max_cols = 10
     ncols = min(max_cols, n_images)
@@ -206,7 +207,7 @@ def plot_classified_images(
     else:
         axes = [axs]
 
-    # Build colormap and normalization for class IDs
+    # 3. Build colormap and normalization
     class_ids_sorted = sorted(class_map.keys())
     
     cmap = ListedColormap(
@@ -218,14 +219,17 @@ def plot_classified_images(
         cmap.N
     )
 
-    # Derive km per displayed pixel when not provided
+    # 4. Derive scale if not provided
     if dx_km is None:
-        dx_km = compute_display_pixel_size_km(
-            raster_path=image_paths[0],
-            downsample_divisor=downsample_divisor,
-        )
+        try:
+            dx_km = compute_display_pixel_size_km(
+                raster_path=image_paths[0],
+                downsample_divisor=downsample_divisor,
+            )
+        except:
+            dx_km = 0.03  # Fallback value if computation fails
 
-    # Plot each classified raster
+    # 5. Plot each raster
     for i, (path, year) in enumerate(zip(image_paths, years)):
         ax = axes[i]
         with rasterio.open(path) as src:
@@ -245,7 +249,7 @@ def plot_classified_images(
     for j in range(n_images, len(axes)):
         axes[j].axis("off")
 
-    # Create legend
+    # 6. Add Legend
     legend_elements = [
         Rectangle(
             (0, 0), 1, 1, 
@@ -265,7 +269,7 @@ def plot_classified_images(
         fontsize=24,
     )
 
-    # Add scale bar and north arrow
+    # 7. Add Scale Bar and North Arrow
     scalebar = ScaleBar(
         dx=dx_km, 
         units="km", 
@@ -276,15 +280,16 @@ def plot_classified_images(
         box_alpha=0
     )
     
-    axes[n_images - 1].add_artist(scalebar)
+    last_ax.add_artist(scalebar)
     
+    # Fix: Pass rotation as a dictionary to bypass CRS auto-detection
     north_arrow(
-        axes[n_images - 1], 
+        last_ax, 
         location="upper left",
-        rotation=0
+        rotation={"degrees": 0}
     )
 
-    # Save figure
+    # 8. Save and show
     out_fig = os.path.join(output_path, "map_panel_input_maps.png")
     
     plt.savefig(
