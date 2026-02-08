@@ -44,38 +44,6 @@ The United States National Aeronautical and Space Administration supported this 
 <img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/logos/nasa_lulc_dark.png" width="150" height="100"> <img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/logos/mapbiomas_geral.png" width="120" height="70">
           <img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/logos/clark_logo_horizontal.png" width="150" height="70">
 
-
-## Citation
-
-If you use this code or methodology in your research, please cite:
-
-> Fonseca, A. V., & [Outros Autores]. (2026). [Título do Artigo]. *Transactions in GIS*. https://doi.org/10.1111/tgis.70136
-
-**BibTeX:**
-```bibtex
-@article{fonseca2026summarize,
-  title={Your Paper Title Here},
-  author={Fonseca, Antonio V and others},
-  journal={Transactions in GIS},
-  year={2026},
-  doi={10.1111/tgis.70136},
-  url={[https://onlinelibrary.wiley.com/doi/full/10.1111/tgis.70136](https://onlinelibrary.wiley.com/doi/full/10.1111/tgis.70136)}
-}
----
-## Quickstart: Run Locally on Your Computer
-
-1. **Clone the repository**  
-   ```bash
-   git clone https://github.com/antoniovfonseca/summarize-change-components.git
-   cd summarize-change-components
-
-2. **Create and activate a virtual environment**
-   ```bash
-   conda env create -f environment.yml
-   # or, with mamba:
-   # mamba env create -f environment.yml
-   ```
-
 3. **Activate environment**
    ```bash
    conda activate summarize-change
