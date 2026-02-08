@@ -71,6 +71,24 @@ The United States National Aeronautical and Space Administration supported this 
    ```bash
    jupyter lab
 ---
+## Citation
+
+If you use this code or methodology in your research, please cite:
+
+> Fonseca, A. V., & [Outros Autores]. (2026). [Título do Artigo]. *Transactions in GIS*. https://doi.org/10.1111/tgis.70136
+
+**BibTeX:**
+```bibtex
+@article{fonseca2026summarize,
+  title={Your Paper Title Here},
+  author={Fonseca, Antonio V and others},
+  journal={Transactions in GIS},
+  year={2026},
+  doi={10.1111/tgis.70136},
+  url={[https://onlinelibrary.wiley.com/doi/full/10.1111/tgis.70136](https://onlinelibrary.wiley.com/doi/full/10.1111/tgis.70136)}
+}
+```
+---
 ## **Example Data**
 
 ## **1.Enviroment Setup**
