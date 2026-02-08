@@ -32,7 +32,7 @@ This notebook summarizes the overall change and the class-level changes during t
 
 **Dataset:**
 
-The dataset used in this study is available in the Zenodo repository. You can access it [here]([https://doi.org/10.5281/zenodo.15106894]).
+The dataset used in this study is available in the Zenodo repository. You can access it [here](https://doi.org/10.5281/zenodo.15106894).
 
 **Acknowledgements:**
 
