@@ -3,10 +3,8 @@
 # **Summarize Components of Change in a Cross-Tab Matrix**
 [![Paper](https://img.shields.io/badge/Paper-TGIS-blue)](https://onlinelibrary.wiley.com/doi/full/10.1111/tgis.70136)
 [![DOI](https://img.shields.io/badge/DOI-10.1111%2Ftgis.70136-green)](https://doi.org/10.1111/tgis.70136)
-
-This repository contains the implementation and data associated with the research published in **Transactions in GIS**.
 ---
-
+This repository contains the implementation and data associated with the research published in **Transactions in GIS**.
 
 **Authors:** [Antonio Fonseca](https://orcid.org/my-orcid?orcid=0000-0001-6309-6204), [Robert Gilmore Pontius Jr](https://wordpress.clarku.edu/rpontius/)
 
