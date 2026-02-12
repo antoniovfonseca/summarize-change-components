@@ -3,6 +3,7 @@
 # **Summarize Components of Change in a Cross-Tab Matrix**
 [![Paper](https://img.shields.io/badge/Paper-TGIS-blue)](https://onlinelibrary.wiley.com/doi/full/10.1111/tgis.70136)
 [![DOI](https://img.shields.io/badge/DOI-10.1111%2Ftgis.70136-green)](https://doi.org/10.1111/tgis.70136)
+[![AI Assisted](https://img.shields.io/badge/AI%20Assisted-Code%20Generation-success)](#declaracao-de-uso-de-ia)
 ---
 This repository contains the implementation and data associated with the research published in **Transactions in GIS**.
 
@@ -42,6 +43,8 @@ The United States National Aeronautical and Space Administration supported this 
 <img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/logos/nasa_lulc_dark.png" width="150" height="100"> <img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/logos/mapbiomas_geral.png" width="120" height="70">
           <img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/logos/clark_logo_horizontal.png" width="150" height="70">
 
+## AI Use Disclosure
+During the preparation of this work, the author used AI tools in order to generate helper functions and debug visualization scripts. After using these tools, the author reviewed and edited the content as needed and takes full responsibility for the content of the publication.
 
 ---
 ## Citation
