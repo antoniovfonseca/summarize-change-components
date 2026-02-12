@@ -1,7 +1,6 @@
 <img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/logos/app_cover.png" width="1000" height="180"> 
 
 # **Summarize Components of Change in a Cross-Tab Matrix**
-[![Paper](https://img.shields.io/badge/Paper-TGIS-blue)](https://onlinelibrary.wiley.com/doi/full/10.1111/tgis.70136)
 [![DOI](https://img.shields.io/badge/DOI-10.1111%2Ftgis.70136-green)](https://doi.org/10.1111/tgis.70136)
 [![AI Assisted](https://img.shields.io/badge/AI%20Assisted-Code%20Generation-success)](#declaracao-de-uso-de-ia)
 ---
