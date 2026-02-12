@@ -62,7 +62,6 @@ If you use this code or methodology in your research, please cite:
 }
 ```
 ---
----
 ## Quickstart: Run Locally on Your Computer
 
 1. **Clone the repository**  
