@@ -42,6 +42,7 @@ The United States National Aeronautical and Space Administration supported this 
 <img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/logos/nasa_lulc_dark.png" width="150" height="100"> <img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/logos/mapbiomas_geral.png" width="120" height="70">
           <img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/logos/clark_logo_horizontal.png" width="150" height="70">
 
+<a id="AIdisclosure"></a>
 ## AI Use Disclosure
 During the preparation of this work, the author used AI tools in order to generate helper functions and debug visualization scripts. After using these tools, the author reviewed and edited the content as needed and takes full responsibility for the content of the publication.
 
