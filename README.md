@@ -42,6 +42,26 @@ The United States National Aeronautical and Space Administration supported this 
 <img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/logos/nasa_lulc_dark.png" width="150" height="100"> <img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/logos/mapbiomas_geral.png" width="120" height="70">
           <img src="https://raw.githubusercontent.com/antoniovfonseca/summarize-change-components/refs/heads/main/logos/clark_logo_horizontal.png" width="150" height="70">
 
+
+---
+## Citation
+
+If you use this code or methodology in your research, please cite:
+
+> Pontius Jr, R. G., & Fonseca, A. V. (2024). A GIS Method to Summarize Changes Among Classes During a Time Series With an Application to Land Cover in Western Bahia, Brazil. Transactions in GIS. https://doi.org/10.1111/tgis.70136
+
+**BibTeX:**
+```bibtex
+@article{pontius2024gis,
+  title={A GIS Method to Summarize Changes Among Classes During a Time Series With an Application to Land Cover in Western Bahia, Brazil},
+  author={Pontius Jr, Robert Gilmore and Fonseca, Antônio V.},
+  journal={Transactions in GIS},
+  year={2024},
+  doi={10.1111/tgis.70136},
+  url={https://onlinelibrary.wiley.com/doi/full/10.1111/tgis.70136}
+}
+```
+---
 ---
 ## Quickstart: Run Locally on Your Computer
 
@@ -68,25 +88,7 @@ The United States National Aeronautical and Space Administration supported this 
 8. **Launch JupyterLab**
    ```bash
    jupyter lab
----
-## Citation
 
-If you use this code or methodology in your research, please cite:
-
-> Pontius Jr, R. G., & Fonseca, A. V. (2024). A GIS Method to Summarize Changes Among Classes During a Time Series With an Application to Land Cover in Western Bahia, Brazil. Transactions in GIS. https://doi.org/10.1111/tgis.70136
-
-**BibTeX:**
-```bibtex
-@article{pontius2024gis,
-  title={A GIS Method to Summarize Changes Among Classes During a Time Series With an Application to Land Cover in Western Bahia, Brazil},
-  author={Pontius Jr, Robert Gilmore and Fonseca, Antônio V.},
-  journal={Transactions in GIS},
-  year={2024},
-  doi={10.1111/tgis.70136},
-  url={https://onlinelibrary.wiley.com/doi/full/10.1111/tgis.70136}
-}
-```
----
 ## **Example Data**
 
 ## **1.Enviroment Setup**
