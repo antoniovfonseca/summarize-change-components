@@ -2,7 +2,7 @@
 
 # **Summarize Components of Change in a Cross-Tab Matrix**
 [![DOI](https://img.shields.io/badge/DOI-10.1111%2Ftgis.70136-green)](https://doi.org/10.1111/tgis.70136)
-[![AI Assisted](https://img.shields.io/badge/AI%20Assisted-Code%20Generation-success)](#declaracao-de-uso-de-ia)
+[![AI Assisted](https://img.shields.io/badge/AI%20Assisted-Code%20Generation-success)](#AIdisclosure)
 ---
 This repository contains the implementation and data associated with the research published in **Transactions in GIS**.
 
