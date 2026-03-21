@@ -80,7 +80,7 @@ If you use this code or methodology in your research, please cite:
    ```
 3. **Activate environment**
    ```bash
-   conda activate summarize-change
+   conda activate cca_env
    ```
 
 6. **Install JupyterLab (if you do not have it yet)**
