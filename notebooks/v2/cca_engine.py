@@ -32,124 +32,120 @@ import matplotlib.ticker as mticker
 # Pydantic input models
 # -----------------------------
 
-
 class StackInput(BaseModel):
     """Validation model for raster stack inputs.
-
-    This model enforces type constraints for loading temporal sequences of raster
-    data. All raster files must have identical dimensions and geospatial metadata.
 
     Attributes
     ----------
     image_paths : List[FilePath]
-        Paths to raster files. Must be valid file paths. Will be sorted internally
-        to ensure correct temporal order during processing.
-    nodata : conint(ge=0)
-        NoData integer value indicating missing or invalid pixels. Typically 0 or 255.
-        Defaults to 255. Pixels with this value are excluded from all analyses.
+        Paths to raster files.
+    nodata : int
+        Mandatory NoData integer value (e.g., 255, 0, -9999).
     """
-
     image_paths: List[FilePath]
-    nodata: conint(ge=0) = 255
+    nodata: int
 
 
 class PixelCountInput(BaseModel):
     """Validation model for pixel count and classification accounting.
 
-    Computes per-class pixel statistics (area in pixels) for each temporal snapshot.
-    Requires aligned image and year sequences and a class dictionary mapping IDs
-    to human-readable names (e.g., 1 → {"name": "Forest", "code": "FOR"}).
-
     Attributes
     ----------
     image_paths : List[FilePath]
-        Ordered paths to classification rasters (one per year).
-    years : List[conint(ge=0)]
-        Corresponding calendar years. Must have same length as image_paths.
+        Ordered paths to classification rasters.
+    years : List[int]
+        Corresponding calendar years.
     class_labels_dict : Dict[int, Dict[str, str]]
-        Lookup table: class_id → {"name": label, "code": optional}.
-        Only classes present in this dict are counted; others are ignored.
+        Lookup table for class metadata.
     output_path : DirectoryPath
-        Directory where output CSV will be written to tables/ subfolder.
-    nodata : conint(ge=0)
-        NoData indicator value. Defaults to 255.
+        Directory where output CSV will be written.
+    nodata : int
+        Mandatory NoData indicator value.
     """
-
     image_paths: List[FilePath]
-    years: List[conint(ge=0)]
+    years: List[int]
     class_labels_dict: Dict[int, Dict[str, str]]
     output_path: DirectoryPath
-    nodata: conint(ge=0) = 255
+    nodata: int
 
 
 class TrajectoryInput(BaseModel):
     """Validation model for pixel-level trajectory classification.
 
-    Classifies each pixel's temporal sequence into one of five trajectory types
-    representing distinct land-use change dynamics (stable, reversal, etc.).
-    Output is a GeoTIFF with values 1–5 (or nodata).
-
     Attributes
     ----------
     image_paths : List[FilePath]
-        Ordered classification rasters covering the time series.
+        Ordered classification rasters.
     output_path : DirectoryPath
-        Root output directory; trajectory.tif written to rasters/ subfolder.
-    years : List[conint(ge=0)]
-        Calendar years corresponding to image_paths. Must match length.
-    nodata : conint(ge=0)
-        NoData value in input rasters. Defaults to 255.
+        Root output directory.
+    years : List[int]
+        Calendar years.
+    nodata : int
+        Mandatory NoData value in input rasters.
     """
     image_paths: List[FilePath]
     output_path: DirectoryPath
-    years: List[conint(ge=0)]
-    nodata: conint(ge=0) = 255
+    years: List[int]
+    nodata: int
 
 
 class CCAInput(BaseModel):
-    """Validation model for Change Component Analysis (CCA) decomposition.
-
-    Orchestrates the full CCA pipeline: builds transition matrices per interval,
-    computes per-class gain/loss/exchange/shift components (Pontius Jr. framework),
-    and saves CSV outputs. Follows Pontius (2010, 2016) decomposition methodology.
+    """Validation model for Change Component Analysis (CCA).
 
     Attributes
     ----------
     image_paths : List[FilePath]
-        Ordered classification rasters for the analysis period.
-    years : List[conint(ge=0)]
-        Calendar years; must correspond to image_paths.
+        Ordered classification rasters.
+    years : List[int]
+        Calendar years.
     class_labels_dict : Dict[int, Dict[str, str]]
-        Class metadata: id → {"name": label}. Used in component naming.
+        Class metadata mapping.
     output_path : DirectoryPath
-        Output root; CSVs written to tables/ subfolder.
-    nodata : conint(ge=0)
-        NoData value. Defaults to 255.
+        Output root directory.
+    nodata : int
+        Mandatory NoData value.
     """
     image_paths: List[FilePath]
-    years: List[conint(ge=0)]
+    years: List[int]
     class_labels_dict: Dict[int, Dict[str, str]]
     output_path: DirectoryPath
-    nodata: conint(ge=0) = 255
+    nodata: int
+
+
+class ChangeFrequencyInput(BaseModel):
+    """Validation model for change frequency accounting.
+
+    Attributes
+    ----------
+    image_paths : List[FilePath]
+        Ordered classification rasters.
+    years : List[int]
+        Calendar years.
+    output_path : DirectoryPath
+        Root output directory.
+    nodata : int
+        Mandatory NoData value.
+    """
+    image_paths: List[FilePath]
+    years: List[int]
+    output_path: DirectoryPath
+    nodata: int
 
 
 class HeatmapInput(BaseModel):
     """Validation model for heatmap visualization generation.
 
-    Loads pre-computed transition matrices (CSV) from the output directory and
-    generates publication-ready heatmaps (PNG) with logarithmic coloring and labels.
-
     Attributes
     ----------
     output_path : DirectoryPath
-        Directory containing tables/ subfolder with transition matrix CSVs.
-    years : List[conint(ge=0)]
-        Temporal range [start_year, ..., end_year]. Used in matrix filename lookup.
+        Directory containing transition matrix CSVs.
+    years : List[int]
+        Temporal range.
     class_labels_dict : Dict[int, Dict[str, str]]
-        Class lookup for axis labels in heatmaps.
+        Class lookup for axis labels.
     """
     output_path: DirectoryPath
-    years: List[conint(ge=0)]
+    years: List[int]
     class_labels_dict: Dict[int, Dict[str, str]]
 
 
