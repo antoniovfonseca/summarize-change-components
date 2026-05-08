@@ -610,6 +610,119 @@ def calculate_change_frequency(params: ChangeFrequencyInput) -> pd.DataFrame:
     return df_freq
 
 
+def plot_number_change_time_interval(
+    df: pd.DataFrame,
+    output_path: str,
+) -> str:
+    """
+    Create a stacked bar chart showing the sequence of changes per interval.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        DataFrame with intervals as index and change counts as columns.
+    output_path : str
+        Directory to save the resulting figure.
+
+    Returns
+    -------
+    str
+        Path to the saved PNG figure.
+    """
+    # 1. Determine Unit Scaling
+    max_val = df.sum(axis=1).max()
+
+    if max_val >= 1_000_000_000_000:
+        factor, suffix = 1_000_000_000_000.0, " (trillion pixels)"
+    elif max_val >= 1_000_000_000:
+        factor, suffix = 1_000_000_000.0, " (billion pixels)"
+    elif max_val >= 1_000_000:
+        factor, suffix = 1_000_000.0, " (million pixels)"
+    elif max_val >= 1_000:
+        factor, suffix = 1_000.0, " (thousand pixels)"
+    else:
+        factor, suffix = 1.0, ""
+
+    df_scaled = df / factor
+
+    # 2. Setup Figure and Colors
+    fig, ax = plt.subplots(figsize=(14, 6))
+    n_cols = len(df.columns)
+    cmap = plt.cm.viridis_r
+
+    if n_cols > 1:
+        colors = [cmap(i / (n_cols - 1)) for i in range(n_cols)]
+    else:
+        colors = [cmap(0.5)]
+
+    # 3. Plot Stacked Bars
+    bottom = pd.Series(0.0, index=df_scaled.index)
+
+    for i, col in reversed(list(enumerate(df.columns))):
+        vals = df_scaled[col]
+        label_txt = f"{col}" if vals.sum() > 0 else "_nolegend_"
+
+        ax.bar(
+            df_scaled.index,
+            vals,
+            bottom=bottom,
+            label=label_txt,
+            color=colors[i],
+            edgecolor="none",
+            linewidth=0.5,
+            width=0.9,
+        )
+        bottom += vals
+
+    # 4. Formatting Axes and Labels
+    y_label_text = f"Change{suffix}"
+    ax.set_ylabel(y_label_text, fontsize=18)
+    ax.yaxis.set_major_locator(mticker.MaxNLocator(nbins=5, integer=True))
+    ax.set_title("Number of Changes during Time Intervals", fontsize=20, pad=15)
+
+    # 5. X-Axis labels rotation logic
+    labels = ax.get_xticklabels()
+    n_labels = len(labels)
+
+    if n_labels <= 6:
+        rotation, ha = 0, "center"
+    elif n_labels <= 12:
+        rotation, ha = 45, "right"
+    else:
+        rotation, ha = 90, "center"
+
+    plt.setp(labels, rotation=rotation, ha=ha, fontsize=18)
+    ax.tick_params(axis="y", rotation=0, labelsize=18)
+
+    # 6. Legend formatting
+    handles, labels_list = ax.get_legend_handles_labels()
+    leg = ax.legend(
+        handles[::-1],
+        labels_list[::-1],
+        title="Changes",
+        title_fontsize=16,
+        bbox_to_anchor=(1.02, 0.5),
+        loc="center left",
+        frameon=False,
+        fontsize=16,
+    )
+
+    for patch in leg.get_patches():
+        patch.set_linewidth(0)
+
+    plt.tight_layout()
+
+    # 7. Save Figure
+    charts_dir = os.path.join(output_path, "charts")
+    os.makedirs(charts_dir, exist_ok=True)
+    output_fig = os.path.join(charts_dir, "chart_number_change_time_interval.png")
+    
+    plt.savefig(output_fig, dpi=300, bbox_inches="tight")
+    plt.close(fig)
+    
+    return str(output_fig)
+
+
 def compute_trajectories(params: TrajectoryInput) -> str:
     """Classify all pixels' temporal dynamics and save trajectory map.
 
