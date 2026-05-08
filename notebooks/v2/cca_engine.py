@@ -828,6 +828,243 @@ def generate_heatmaps(params: HeatmapInput) -> Dict[str, str]:
     return saved
 
 
+def plot_pixel_counts_bar_chart(
+    pivot_pixels: pd.DataFrame,
+    class_labels_dict: dict,
+    output_dir: str,
+) -> None:
+    """
+    Generates and saves a stacked bar chart of pixel counts per class over time.
+
+    Parameters
+    ----------
+    pivot_pixels : pd.DataFrame
+        The pivot table containing pixel counts per year and class.
+    class_labels_dict : dict
+        Dictionary mapping class IDs to metadata (must contain "name" and "color").
+    output_dir : str
+        Directory path where the output plot will be saved.
+    """
+    years_array = pivot_pixels.index.values
+
+    # 1. Determine Y-axis scaling factor and label
+    max_val = pivot_pixels.to_numpy().max()
+
+    if max_val >= 1_000_000_000_000:
+        scale_factor = 1_000_000_000_000
+        y_label = "Class Area (trillion pixels)"
+    elif max_val >= 1_000_000_000:
+        scale_factor = 1_000_000_000
+        y_label = "Class Area (billion pixels)"
+    elif max_val >= 1_000_000:
+        scale_factor = 1_000_000
+        y_label = "Class Area (million pixels)"
+    elif max_val >= 1_000:
+        scale_factor = 1_000
+        y_label = "Class Area (thousand pixels)"
+    elif max_val >= 100:
+        scale_factor = 100
+        y_label = "Class Area (hundred pixels)"
+    else:
+        scale_factor = 1
+        y_label = "Class Area (pixels)"
+
+    pivot_scaled = pivot_pixels / scale_factor
+
+    # 2. Prepare color map and sorting logic
+    class_ids_plot = sorted(
+        class_labels_dict.keys(),
+    )
+
+    color_map = {
+        class_labels_dict[class_id]["name"]: class_labels_dict[class_id]["color"]
+        for class_id in class_ids_plot
+    }
+
+    # Calculate Net Change
+    first_year = years_array[0]
+    last_year = years_array[-1]
+    net_change_per_class = (
+        pivot_scaled.loc[last_year]
+        - pivot_scaled.loc[first_year]
+    )
+
+    # Map names back to IDs for tie-breaking
+    name_to_id_map = {
+        v["name"]: k
+        for k, v in class_labels_dict.items()
+    }
+
+    df_sorting = net_change_per_class.to_frame(
+        name="net_change",
+    )
+    df_sorting["class_id"] = df_sorting.index.map(
+        name_to_id_map,
+    )
+
+    # Sort: Net Change (Desc) then Class ID (Desc)
+    classes_for_stack = list(
+        df_sorting.sort_values(
+            by=[
+                "net_change",
+                "class_id",
+            ],
+            ascending=[
+                False,
+                False,
+            ],
+        ).index,
+    )
+
+    # Legend order: Reversed stack order
+    classes_for_legend = list(
+        reversed(classes_for_stack),
+    )
+
+    # 3. Generate the Stacked Bar Chart
+    fig, ax = plt.subplots(
+        figsize=(
+            10,
+            6,
+        ),
+    )
+
+    x = np.arange(
+        len(years_array),
+    )
+    width = 0.9
+    base = np.zeros(
+        len(years_array),
+        dtype=float,
+    )
+    patches_by_class: dict[str, plt.Artist] = {}
+
+    for cls in classes_for_stack:
+        if cls not in pivot_scaled.columns:
+            continue
+
+        values_cls = pivot_scaled[cls].reindex(
+            years_array,
+            fill_value=0.0,
+        ).values
+
+        bars = ax.bar(
+            x,
+            values_cls,
+            bottom=base,
+            width=width,
+            label=cls,
+            color=color_map.get(cls, "gray"),
+        )
+        patches_by_class[cls] = bars[0]
+        base += values_cls
+
+    # 4. Configure Axes
+    ax.set_xticks(
+        x,
+    )
+    ax.set_xticklabels(
+        years_array,
+    )
+
+    # Adaptive rotation for X-axis labels
+    n_labels = len(years_array)
+
+    if n_labels <= 6:
+        rotation = 0
+        ha = "center"
+    else:
+        rotation = 90
+        ha = "center"
+
+    plt.setp(
+        ax.get_xticklabels(),
+        rotation=rotation,
+        ha=ha,
+    )
+
+    ax.tick_params(
+        axis="both",
+        labelsize=12,
+    )
+    ax.set_ylabel(
+        y_label,
+        fontsize=18,
+    )
+    ax.set_xlabel(
+        "Time points",
+        fontsize=18,
+    )
+    ax.set_title(
+        "Class Area at Time Points",
+        fontsize=20,
+    )
+
+    y_max_scaled = base.max() * 1.1 if base.max() > 0 else 1.0
+    ax.set_ylim(
+        0,
+        y_max_scaled,
+    )
+    ax.yaxis.set_major_locator(
+        mticker.MaxNLocator(
+            nbins=8,
+            integer=True,
+        ),
+    )
+
+    # 5. Add Legend
+    handles = [
+        patches_by_class[cls]
+        for cls in classes_for_legend
+        if cls in patches_by_class
+    ]
+    labels = [
+        cls
+        for cls in classes_for_legend
+        if cls in patches_by_class
+    ]
+
+    leg = ax.legend(
+        handles,
+        labels,
+        title="Class",
+        title_fontsize=16,
+        bbox_to_anchor=(
+            1.02,
+            0.5,
+        ),
+        loc="center left",
+        frameon=False,
+        fontsize=16,
+        alignment="left",
+    )
+
+    plt.tight_layout()
+
+    # 6. Save Figure
+    charts_dir = os.path.join(
+        output_dir,
+        "charts",
+    )
+
+    os.makedirs(
+        charts_dir,
+        exist_ok=True,
+    )
+
+    out_fig = os.path.join(
+        charts_dir,
+        "chart_pixel_per_class_net_change.png",
+    )
+
+    plt.savefig(
+        out_fig,
+        format="png",
+        bbox_inches="tight",
+        dpi=300,
+    )
+    plt.close(fig)
+
 __all__ = [
     # Pydantic input models (contracts for AI agent)
     "StackInput",
@@ -844,4 +1081,5 @@ __all__ = [
     # Utilities (for advanced users)
     "ensure_output_dirs",
     "load_square_matrix",
+    "plot_pixel_counts_bar_chart"
 ]
