@@ -69,6 +69,26 @@ class PixelCountInput(BaseModel):
     nodata: int
 
 
+class ChangeFrequencyInput(BaseModel):
+    """Validation model for change frequency accounting.
+
+    Attributes
+    ----------
+    image_paths : List[FilePath]
+        Ordered classification rasters covering the time series.
+    years : List[int]
+        Calendar years corresponding to image_paths.
+    output_path : DirectoryPath
+        Root output directory; CSV written to tables/ subfolder.
+    nodata : int
+        Mandatory NoData value in input rasters.
+    """
+    image_paths: List[FilePath]
+    years: List[int]
+    output_path: DirectoryPath
+    nodata: int
+
+
 class TrajectoryInput(BaseModel):
     """Validation model for pixel-level trajectory classification.
 
@@ -539,6 +559,55 @@ def calculate_pixel_counts(params: PixelCountInput) -> pd.DataFrame:
     out_csv = tables_dir / "pixels_per_class_per_year.csv"
     pivot_pixels.to_csv(out_csv, index_label="Year")
     return pivot_pixels
+
+
+def calculate_change_frequency(params: ChangeFrequencyInput) -> pd.DataFrame:
+    """Compute the frequency of pixel changes across time intervals.
+
+    Calculates how many times pixels change their class over the entire
+    time series and breaks this down by temporal interval.
+
+    Parameters
+    ----------
+    params : ChangeFrequencyInput
+        Validated input parameters.
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with intervals as index and number of changes as columns.
+        Saved to {output_path}/tables/number_change_per_interval.csv.
+    """
+    p = params
+    dirs = ensure_output_dirs(str(p.output_path))
+
+    # 1. Load the temporal raster sequence
+    stack, _ = load_raster_stack([str(path) for path in p.image_paths])
+
+    # 2. Compute frequencies using the Numba engine
+    raw_counts = compute_change_frequency_numba(stack, int(p.nodata))
+
+    # 3. Determine the maximum number of changes observed to trim columns
+    max_changes = 0
+    if np.any(raw_counts > 0):
+        col_sums = raw_counts.sum(axis=0)
+        if np.any(col_sums > 0):
+            max_changes = np.max(np.nonzero(col_sums))
+
+    relevant_counts = raw_counts[:, :max_changes + 1]
+
+    # 4. Format labels and columns
+    intervals = [f"{p.years[i]}-{p.years[i+1]}" for i in range(len(p.years) - 1)]
+    cols = [str(i + 1) for i in range(relevant_counts.shape[1])]
+
+    # 5. Create DataFrame and export
+    df_freq = pd.DataFrame(relevant_counts, index=intervals, columns=cols)
+    df_freq.index.name = "Interval"
+
+    out_csv = Path(dirs["tables"]) / "number_change_per_interval.csv"
+    df_freq.to_csv(out_csv)
+
+    return df_freq
 
 
 def compute_trajectories(params: TrajectoryInput) -> str:
@@ -1067,6 +1136,8 @@ __all__ = [
     # Pydantic input models (contracts for AI agent)
     "StackInput",
     "PixelCountInput",
+    "ChangeFrequencyInput",
+    "calculate_change_frequency",
     "TrajectoryInput",
     "CCAInput",
     "HeatmapInput",
