@@ -832,7 +832,7 @@ def plot_pixel_counts_bar_chart(
     pivot_pixels: pd.DataFrame,
     class_labels_dict: dict,
     output_dir: str,
-) -> None:
+) -> str:
     """
     Generates and saves a stacked bar chart of pixel counts per class over time.
 
@@ -1064,6 +1064,8 @@ def plot_pixel_counts_bar_chart(
         dpi=300,
     )
     plt.close(fig)
+
+    return str(out_fig)
 
 __all__ = [
     # Pydantic input models (contracts for AI agent)
