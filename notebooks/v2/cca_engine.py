@@ -988,6 +988,14 @@ def generate_heatmaps(params: HeatmapInput) -> Dict[str, str]:
         if not csv_path.exists():
             continue
         df = load_square_matrix(str(csv_path))
+
+            # Force diagonal to 0 for Alternation Shift and Quantity & Allocation Shift matrices
+            suffix_lower = suffix.lower()
+            if "alternation_shift" in suffix_lower or "quantity" in suffix_lower:
+                df_vals = df.values.astype(float)
+                np.fill_diagonal(df_vals, 0.0)
+                df = pd.DataFrame(df_vals, index=df.index, columns=df.columns)
+
         # simple heatmap: use matplotlib (imported at module top)
         fig, ax = plt.subplots(figsize=(8, 8))
         im = ax.imshow(df.values.astype(float), cmap="YlOrRd")
@@ -995,7 +1003,43 @@ def generate_heatmaps(params: HeatmapInput) -> Dict[str, str]:
         ax.set_yticks(range(len(df.index)))
         ax.set_xticklabels([str(x) for x in df.columns], rotation=90, fontsize=6)
         ax.set_yticklabels([str(x) for x in df.index], fontsize=6)
-        fig.colorbar(im, ax=ax)
+        
+        if key == "sum" or "alt" in key:
+            ax.set_title(f"{meta[1]} {str_y0}...{str_y1}")
+        else:
+            ax.set_title(f"{meta[1]} {str_y0}-{str_y1}")
+        
+        cbar = fig.colorbar(im, ax=ax)
+
+        # 1. Determina o fator de escala para os valores da barra de cores
+        max_abs = float(np.nanmax(np.abs(df.values))) if df.values.size > 0 else 0.0
+
+        factor = 1.0
+        suffix = ""
+        if max_abs >= 1_000_000_000_000:
+            factor = 1_000_000_000_000.0
+            suffix = "trillions"
+        elif max_abs >= 1_000_000_000:
+            factor = 1_000_000_000.0
+            suffix = "billions"
+        elif max_abs >= 1_000_000:
+            factor = 1_000_000.0
+            suffix = "millions"
+        elif max_abs >= 1_000:
+            factor = 1_000.0
+            suffix = "thousands"
+        
+        # 2. Aplica o formatador para remover letras dos ticks
+        # O formatador FuncFormatter permite aplicar uma função lambda para formatar os ticks
+        cbar.formatter = mticker.FuncFormatter(lambda x, p: f"{x/factor:.0f}")
+        cbar.update_ticks() # Atualiza os ticks com o novo formatador
+        
+        # 3. Define o rótulo da barra de cores mantendo a unidade descritiva entre parênteses
+        cbar_label = "Number of pixels"
+        if suffix:
+            cbar_label = f"{cbar_label} ({suffix})"
+        cbar.set_label(cbar_label, rotation=270, labelpad=15)
+
         charts_dir = Path(dirs["charts"]) / "heatmaps"
         charts_dir.mkdir(parents=True, exist_ok=True)
         out_fig = charts_dir / f"heatmap_{suffix}_{interval_str}.png"
