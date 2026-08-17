@@ -1,7 +1,13 @@
 ---
 title: "QUEST: Quantity, Exchange, and Shift Through Time"
 author: "Antonio Fonseca"
-format: revealjs
+format:
+  revealjs:
+    slide-number: "c/t"
+    show-slide-number: "all"
+    hash-one-based-index: true
+    theme: default
+    fontsize: 1.8em
 ---
 
 ## The Problem with Traditional Time Series Analysis
@@ -64,7 +70,7 @@ QUEST expresses the total volume of transitions by separating spatial redistribu
 
 To demonstrate the QUEST workflow live without excessive processing time, we analyze four time points from the Virginia Coast Reserve dataset:
 
-* **Time Steps:** 1990, 2000, 2010, and 2020.
+* **Time Points:** 1990, 2000, 2010, and 2020.
 * **Classes:** Trees, Marsh, Beach, and Water.
 * **Interactive Outputs:**
   * Spatial maps of total change counts, trajectories, and change components.
