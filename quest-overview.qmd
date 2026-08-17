@@ -1,0 +1,74 @@
+---
+title: "QUEST: Quantity, Exchange, and Shift Through Time"
+author: "Antonio Fonseca"
+format: revealjs
+---
+
+## The Problem with Traditional Time Series Analysis
+
+Remote sensing archives produce long sequences of classified maps, leaving researchers with vast amounts of categorical data across time. 
+
+Analyzing temporal patterns typically relies on pairwise transition matrices computed independently for each time interval.
+
+This conventional approach has fundamental limitations:
+
+* **Information overload:** A time series generates as many individual matrices as there are intervals, making comprehensive visual and quantitative assessment impractical.
+* **Missing pixel histories:** Evaluating intervals independently fails to track individual locations through time, ignoring the number of times a single pixel changes.
+* **Hidden dynamics:** Traditional methods cannot detect whether a landscape change represents a permanent conversion, cyclical oscillation, or multi-step intermediate transitions.
+
+QUEST resolves these blind spots by following each pixel across the entire series to decompose change into distinct spatial and temporal components.
+
+## Spatial Components: Quantity and Allocation
+
+Gross change between two time points consists of spatial redistribution and net size differences.
+
+QUEST separates spatial change into three distinct components:
+
+* **Quantity:** The absolute net change in the total area of a class across the landscape.
+* **Allocation Exchange:** Spatial swapping where class A transitions to class B in some locations, while class B transitions to class A in an equal number of locations elsewhere.
+* **Allocation Shift:** Spatial displacement where class B gains from class A in certain locations while simultaneously losing to class C in others.
+
+## Temporal Dynamics: Introducing Alternation
+
+Analyzing a long time series requires tracking locations that experience multiple transitions over time.
+
+When a pixel changes more than once, the class that gains during an earlier interval must be the class that loses during a later interval. This behavior defines **alternation**:
+
+* **Alternation Exchange:** A pixel transitions from class A to class B and subsequently returns from class B to class A.
+* **Alternation Shift:** A pixel transitions through intermediate stages (such as class A to class B to class C) without immediately returning to the initial state.
+
+Alternation accounts for cyclical dynamics, temporary conversions, and classification noise that traditional two-map comparisons obscure.
+
+## Categorizing Pixel Trajectories
+
+QUEST tracks every pixel from the start point to the end point, grouping individual histories into five trajectories:
+
+* **Trajectory 1 (No change):** The pixel never changes class throughout the entire time series.
+* **Trajectory 2 (Changes >1 with stable extent):** The pixel undergoes multiple changes across intermediate years but finishes in its initial class.
+* **Trajectory 3 (Changes =1):** The pixel changes class exactly once across the timeline.
+* **Trajectory 4 (Changes >2 with direct transition):** The pixel changes multiple times, but the direct step from initial class to final class exists in at least one time interval.
+* **Trajectory 5 (Changes >1 without direct transition):** The pixel ends in a different class through intermediate steps, never experiencing a direct step from start class to end class.
+
+## Decomposing the Time Series into Transition Matrices
+
+QUEST expresses the total volume of transitions by separating spatial redistribution across the landscape from temporal oscillations at specific pixels:
+
+* **Time Intervals Matrix:** The cumulative sum of all transitions occurring across every consecutive time step.
+* **Allocation Exchange (Space):** Swapping between *different locations*—class A transitions to B in some pixels, while class B transitions to A in other pixels over the temporal extent.
+* **Alternation Exchange (Time):** Reversible swapping at the *same location*—a single pixel transitions from class A to B in one interval, then returns from B to A in a later interval.
+* **Quantity & Allocation Shift:** Net class growth and non-swapping spatial displacement across the full extent.
+* **Alternation Shift:** Non-reversing, multi-step pathways at the same pixel (e.g., A to B to C).
+* **Indirect Extent:** Transitions from start class to end class that occurred strictly through intermediate steps rather than direct transitions.
+
+## Case Study: Virginia Coast Reserve (1990–2020)
+
+To demonstrate the QUEST workflow live without excessive processing time, we analyze four time points from the Virginia Coast Reserve dataset:
+
+* **Time Steps:** 1990, 2000, 2010, and 2020.
+* **Classes:** Trees, Marsh, Beach, and Water.
+* **Interactive Outputs:**
+  * Spatial maps of total change counts, trajectories, and change components.
+  * Summary stacked bar charts segmented by interval, overall total, and individual class gains and losses.
+  * Heatmaps displaying transitions across each change component matrix.
+
+Let us open the Jupyter Notebook on Google Colab to run the pipeline step by step.
