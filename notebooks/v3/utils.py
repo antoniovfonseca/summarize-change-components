@@ -4951,6 +4951,7 @@ def export_alternation_components_gee(
 
     print("Step 3/4: Reducing global area and configuring export tasks...")
     tasks = []
+    task_names = []
     # Create a separate export task for each component
     for name, image in component_images.items():
         totals = image.reduceRegion(
@@ -4973,12 +4974,13 @@ def export_alternation_components_gee(
             fileFormat="CSV"
         )
         tasks.append(task)
+        task_names.append(task_name)
 
     print("Step 4/4: Starting tasks sequentially to avoid quota errors...")
-    for task in tasks:
+    for task, task_name in zip(tasks, task_names):
         # Start one task and wait for it to complete before starting the next
         task.start()
-        print(f"🚀 Task started: {task.description}. Monitoring...")
+        print(f"🚀 Task started: {task_name}. Monitoring...")
         while task.active():
             minutes_ran = (time.time() - task.status()['start_timestamp_ms']/1000) / 60
             print(
@@ -4990,11 +4992,11 @@ def export_alternation_components_gee(
         final_status = task.status()
         if final_status['state'] != 'COMPLETED':
             error_msg = final_status.get('error_message', 'No error message found.')
-            print(f"🚨 Task {task.description} failed: {error_msg}") # noqa
+            print(f"🚨 Task {task_name} failed: {error_msg}") # noqa
             # Stop processing further tasks if one fails
-            raise Exception(f"Task {task.description} failed.")
+            raise Exception(f"Task {task_name} failed.")
         else:
-            print(f"✅ Task {task.description} completed successfully.")
+            print(f"✅ Task {task_name} completed successfully.")
 
     return tasks
 
