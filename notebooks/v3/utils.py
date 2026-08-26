@@ -986,7 +986,7 @@ def plot_global_change_frequency_bar_chart(
 
     # 8. Setup Figure and Colors
     fig, ax = plt.subplots(
-        figsize=(20,6),
+        figsize=(12,6),
     )
 
     n_cols = len(
