@@ -5001,27 +5001,400 @@ def export_alternation_components_gee(
     return tasks
 
 
-def plot_alternation_exchange_map(*args, **kwargs):
-    """This function is deprecated and its logic is now part of the new GEE implementation."""
-    print("This function is deprecated.")
-    pass
+def plot_alternation_exchange_map(
+    output_dir: str,
+    nodata_val: int,
+    raster_filename: str,
+    scale_factor: float = 0.05,
+) -> None:
+    """
+    Plot the Alternation Exchange raster map with cartographic elements.
+
+    Parameters
+    ----------
+    output_dir : str
+        Directory containing the exported GEE tiles and where the map will be saved.
+    nodata_val : int
+        Value representing NoData in the raster to be masked out.
+    raster_filename : str
+        Prefix of the raster tiles to plot.
+    scale_factor : float, optional
+        Scale factor to downsample the global raster to fit into memory.
+
+    Returns
+    -------
+    None
+    """
+    # 1. Locate all raster tiles exported by GEE
+    raster_files = glob.glob(os.path.join(
+        output_dir,
+        f"{raster_filename}*.tif")
+    )
+    if not raster_files:
+        raise FileNotFoundError(
+            f"Raster tiles not found for prefix: {raster_filename}. Make sure the GEE export finished."
+        )
+
+    # 2. Create a temporary Virtual Raster (VRT) to merge tiles
+    vrt_path = os.path.join(
+        output_dir,
+        "merged_exchange.vrt"
+    )
+    files_str = " ".join([f'"{f}"' for f in raster_files])
+    os.system(f"gdalbuildvrt {vrt_path} {files_str}")
+
+    # 3. Calculate pixel size for the scale bar
+    pixel_size_km = compute_display_pixel_size_km(
+        raster_path=vrt_path,
+        downsample_factor=scale_factor,
+    )
+
+    # 4. Read raster and basic metadata with downsampling
+    with rasterio.open(vrt_path) as src:
+        out_shape = (
+            max(1, int(src.height * scale_factor)),
+            max(1, int(src.width * scale_factor)),
+        )
+        data = src.read(
+            1,
+            out_shape=out_shape,
+            resampling=rasterio.enums.Resampling.nearest,
+        )
+
+        # Mask using the provided nodata value
+        data_masked = np.ma.masked_equal(data, nodata_val)
+
+        src_crs = src.crs
+        # Adjust the affine transform for the new downsampled resolution
+        transform = src.transform * src.transform.scale(
+            (src.width / data.shape[1]),
+            (src.height / data.shape[0]),
+        )
+        height, width = data.shape
+
+    # 5. Figure
+    fig, ax = plt.subplots(
+        figsize=(20, 10),
+        dpi=300
+    )
+
+    # Determine max value for colormap
+    try:
+        data_max = int(np.ma.max(data_masked))
+    except:
+        data_max = 1
+
+    if data_max <= 0:
+        data_max = 1
+
+    # 6. Discrete colormap configuration
+    original_cmap = plt.get_cmap("viridis_r")
+    # Define the color for value 0 (Background/Gray)
+    colors_list = ["#c0c0c0"] + [
+        original_cmap(i) for i in np.linspace(0, 1, data_max)
+    ]
+    cmap = ListedColormap(colors_list)
+    bounds = np.arange(-0.5, data_max + 1.5, 1)
+    norm = BoundaryNorm(bounds, cmap.N)
+
+    # 7. Plot raster
+    ax.imshow(
+        data_masked,
+        cmap=cmap,
+        interpolation="nearest",
+        norm=norm,
+    )
+
+    # 8. Legend configuration
+    legend_elements = []
+
+    # Extract unique values present in the masked raster data
+    present_values = np.unique(data_masked.compressed())
+
+    for i in range(0, data_max + 1):
+        # Append to legend only if the value is present in the map
+        if i in present_values:
+            legend_elements.append(
+                Patch(
+                    facecolor=cmap(norm(i)),
+                    edgecolor="none",
+                    linewidth=0,
+                    label=str(i),
+                ),
+            )
+
+    ax.legend(
+        handles=legend_elements,
+        loc="center left",
+        bbox_to_anchor=(1.02, 0.5),
+        frameon=False,
+        fontsize=12,
+        borderpad=1.2,
+        title="Exchange",
+        title_fontsize=14,
+        alignment="left",
+        handletextpad=0.8,
+        columnspacing=2,
+        labelspacing=0.8,
+        handlelength=2.0,
+        handleheight=1.5,
+    )
+
+    # 9. Cartographic elements
+    degree_in_meters = 111320.0
+    # Use pixel size if CRS is projected, otherwise use degree equivalent
+    dx_meters = degree_in_meters if ax.get_xlim()[1] <= 180.5 else (pixel_size_km * 1000)
+
+    def km_formatter(value, unit):
+        if unit == "Mm":
+            return f"{int(value * 1000)} km"
+        return f"{int(value)} {unit}"
+
+    scalebar = ScaleBar(
+        dx=dx_meters,
+        units="m",
+        length_fraction=0.15,
+        location="lower left",
+        box_alpha=0.6,
+        scale_formatter=km_formatter,
+    )
+    ax.add_artist(scalebar)
+
+    try:
+        north_arrow(
+            ax,
+            location="upper right",
+            shadow=False,
+            rotation={"degrees": 0},
+            scale=0.5,
+        )
+    except NameError:
+        print("north_arrow function not found. Skipping north arrow.")
+
+    # 10. Axes styling and title
+    ax.set_title(
+        "Alternation Exchange",
+        fontsize=18,
+        pad=10
+    )
+    ax.set_aspect("equal")
+
+    # Define transformers for lat/lon tick labels
+    to_latlon = Transformer.from_crs(
+        src_crs,
+        "EPSG:4326",
+        always_xy=True
+    )
+
+    def format_lon(x, pos):
+        x = np.clip(x, 0, width - 1)
+        x_proj, y_proj = rasterio.transform.xy(transform, height // 2, x)
+        lon, _ = to_latlon.transform(x_proj, y_proj)
+        return f"{lon:.1f}°"
+
+    def format_lat(y, pos):
+        y = np.clip(y, 0, height - 1)
+        x_proj, y_proj = rasterio.transform.xy(transform, y, width // 2)
+        _, lat = to_latlon.transform(x_proj, y_proj)
+        return f"{lat:.1f}°"
+
+    ax.xaxis.set_major_formatter(FuncFormatter(format_lon))
+    ax.yaxis.set_major_formatter(FuncFormatter(format_lat))
+
+    ax.xaxis.set_major_locator(mticker.MaxNLocator(nbins=6))
+    ax.yaxis.set_major_locator(mticker.MaxNLocator(nbins=6))
+
+    ax.tick_params(
+        axis="both",
+        which="major",
+        labelsize=10,
+        pad=4
+    )
+    plt.setp(
+        ax.get_yticklabels(),
+        rotation=90,
+        va="center"
+    )
+
+    # 11. Save and show the figure
+    maps_dir = os.path.join(
+        output_dir,
+        "maps"
+    )
+    os.makedirs(
+        maps_dir,
+        exist_ok=True
+    )
+    output_figure_path = os.path.join(
+        maps_dir,
+        "map_alternation_exchange.png"
+    )
+
+    plt.savefig(
+        output_figure_path,
+        dpi=300,
+        bbox_inches="tight",
+        format="png",
+        pad_inches=0.5,
+    )
+    plt.show()
+    print(f"Map figure saved successfully to: {output_figure_path}")
 
 
-def plot_alternation_shift_map(*args, **kwargs):
-    """This function is deprecated and its logic is now part of the new GEE implementation."""
-    print("This function is deprecated.")
-    pass
+def _compute_alternation_component_raster(
+    component: str,
+    year_list: list,
+    scale: int,
+    nodata_val: int,
+    full_year_list: list = None,
+) -> ee.Image:
+    """
+    Computes a single-band raster with the per-pixel total Alternation
+    component ("exchange" or "shift"), summed across all class-transition
+    pairs, following the Pontius methodology.
+    """
+    if component not in ("exchange", "shift"):
+        raise ValueError("component must be either 'exchange' or 'shift'.")
+
+    if full_year_list is None:
+        full_year_list = year_list
+
+    # Combine lists to build a single stack containing all required years safely
+    combined_years = sorted(list(set(year_list) | set(full_year_list)))
+
+    master_stack, master_band_names = build_glance_stack(
+        year_list=combined_years,
+        collection_id=GLANCE_COLLECTION_ID,
+        band_name=GLANCE_CLASS_BAND,
+        nodata_val=nodata_val,
+    )
+
+    # Global validity mask strictly using full_year_list bands
+    full_year_bands = [f"y{y}" for y in full_year_list]
+    full_stack_subset = master_stack.select(full_year_bands)
+    global_mask = full_stack_subset.neq(nodata_val).unmask(0).reduce(ee.Reducer.min())
+
+    img_start = master_stack.select(f"y{year_list[0]}").rename(GLANCE_CLASS_BAND)
+    img_end = master_stack.select(f"y{year_list[-1]}").rename(GLANCE_CLASS_BAND)
+
+    classes = list(GLANCE_METADATA.keys())
+    img_stack_t = ee.Image([master_stack.select(f"y{y}").rename(GLANCE_CLASS_BAND) for y in year_list[:-1]])
+    img_stack_t1 = ee.Image([master_stack.select(f"y{y}").rename(GLANCE_CLASS_BAND) for y in year_list[1:]])
+
+    component_bands = []
+    for i in classes:
+        for j in classes:
+            if i == j:
+                continue
+
+            E_ij = img_start.eq(i).And(img_end.eq(j)).unmask(0)
+            E_ji = img_start.eq(j).And(img_end.eq(i)).unmask(0)
+
+            V_ij = img_stack_t.eq(i).And(img_stack_t1.eq(j)).reduce(ee.Reducer.sum()).unmask(0)
+            V_ji = img_stack_t.eq(j).And(img_stack_t1.eq(i)).reduce(ee.Reducer.sum()).unmask(0)
+
+            diff_ij = V_ij.subtract(E_ij)
+            diff_ji = V_ji.subtract(E_ji)
+            X_ij = diff_ij.min(diff_ji).max(0)
+
+            if component == "exchange":
+                component_bands.append(X_ij.rename(f"C_{i}_{j}"))
+            else:
+                S_ij = V_ij.subtract(X_ij).subtract(E_ij).max(0)
+                component_bands.append(S_ij.rename(f"C_{i}_{j}"))
+
+    component_image = ee.Image(component_bands).reduce(ee.Reducer.sum()).toInt16()
+    component_image = component_image.updateMask(global_mask)
+    component_image = component_image.unmask(nodata_val)
+    component_image = component_image.set('system:no_data_value', nodata_val)
+
+    return component_image
 
 
-def export_alternation_shift_task_gee(*args, **kwargs):
-    """This function is deprecated. Use export_alternation_components_gee instead."""
-    print("This function is deprecated. Use export_alternation_components_gee instead.")
-    return None
+def export_alternation_exchange_task_gee(
+    year_list: list,
+    drive_folder: str,
+    scale: int = 300,
+    nodata_val: int = 255,
+    full_year_list: list = None,
+) -> ee.batch.Task:
+    """
+    Compute and export a raster representing the total per-pixel Alternation
+    Exchange component, summed across all class-transition pairs.
+    """
+    if GLOBAL_GEOM is None:
+        raise ValueError(
+            "GLOBAL_GEOM is not initialized. Please call "
+            "utils.initialize_active_region(region_code) before running tasks."
+        )
 
-def export_alternation_exchange_task_gee(*args, **kwargs):
-    """This function is deprecated. Use export_alternation_components_gee instead."""
-    print("This function is deprecated. Use export_alternation_components_gee instead.")
-    return None
+    exchange_image = _compute_alternation_component_raster(
+        component="exchange",
+        year_list=year_list,
+        scale=scale,
+        nodata_val=nodata_val,
+        full_year_list=full_year_list,
+    )
+
+    start_year, end_year = year_list[0], year_list[-1]
+    task_desc = f"Alternation_Exchange_{start_year}_{end_year}"
+    task = ee.batch.Export.image.toDrive(
+        image=exchange_image,
+        description=task_desc,
+        folder=drive_folder,
+        scale=scale,
+        region=GLOBAL_GEOM,
+        maxPixels=1e13,
+        crs="EPSG:4326",
+    )
+
+    task.start()
+    print(f"Task '{task_desc}' submitted to Google Earth Engine with NoData: {nodata_val}")
+
+    return task
+
+
+def export_alternation_shift_task_gee(
+    year_list: list,
+    drive_folder: str,
+    scale: int = 300,
+    nodata_val: int = 255,
+    full_year_list: list = None,
+) -> ee.batch.Task:
+    """
+    Compute and export a raster representing the total per-pixel Alternation
+    Shift component, summed across all class-transition pairs.
+    """
+    if GLOBAL_GEOM is None:
+        raise ValueError(
+            "GLOBAL_GEOM is not initialized. Please call "
+            "utils.initialize_active_region(region_code) before running tasks."
+        )
+
+    shift_image = _compute_alternation_component_raster(
+        component="shift",
+        year_list=year_list,
+        scale=scale,
+        nodata_val=nodata_val,
+        full_year_list=full_year_list,
+    )
+
+    start_year, end_year = year_list[0], year_list[-1]
+    task_desc = f"Alternation_Shift_{start_year}_{end_year}"
+    task = ee.batch.Export.image.toDrive(
+        image=shift_image,
+        description=task_desc,
+        folder=drive_folder,
+        scale=scale,
+        region=GLOBAL_GEOM,
+        maxPixels=1e13,
+        crs="EPSG:4326",
+    )
+
+    task.start()
+    print(f"Task '{task_desc}' submitted to Google Earth Engine with NoData: {nodata_val}")
+
+    return task
 
 
 def plot_alternation_shift_map(
