@@ -1,4 +1,4 @@
-name: cca_env
+name: quest_env
 channels:
   - conda-forge
   - nodefaults
@@ -13,6 +13,8 @@ dependencies:
   - pyproj=3.7.2
   - tqdm=4.67.3
   - scikit-learn=1.6.1
+  - ipykernel=7.1.0
+  - jupyterlab=4.5.4
   - pip
   - pip:
     - xlsxwriter==3.2.9
