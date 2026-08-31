@@ -82,12 +82,7 @@ If you use this code or methodology in your research, please cite:
    ```bash
    conda activate quest_env
    ```
-
-6. **Install JupyterLab (if you do not have it yet)**
-   ```bash
-   pip install jupyterlab
-
-8. **Launch JupyterLab**
+4. **Launch JupyterLab**
    ```bash
    jupyter lab
 
