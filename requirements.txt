@@ -11,3 +11,5 @@ scikit-learn==1.6.1
 seaborn==0.13.2
 tqdm==4.67.3
 xlsxwriter==3.2.9
+ipykernel==7.1.0
+jupyterlab==4.5.4
