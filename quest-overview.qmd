@@ -45,17 +45,20 @@ When a pixel changes more than once, the class that gains during an earlier inte
 
 Alternation accounts for cyclical dynamics, temporary conversions, and classification noise that traditional two-map comparisons obscure.
 
-## Categorizing Pixel Trajectories {.smaller .scrollable}
+## Categorizing Pixel Trajectories {.smaller}
 
-QUEST tracks every pixel from the begin time point to the end time point, grouping individual histories into five trajectories:
+::: {style="font-size: 0.6em"}
 
 | Trajectory | Category | Changes | Description |
 |:---:|---|:---:|---|
-| 1 | Stable Extent | = 0 | The pixel never changes class between the begin and end time point. |
-| 2 | Stable Extent | > 1 | The pixel changes class multiple times but returns to its begin class by the end time point. |
-| 3 | Direct Extent | = 1 | The pixel changes class exactly once, directly from its begin class to its end class. |
-| 4 | Direct Extent | > 2 | The pixel changes class multiple times, and at least one time interval transitions directly from the begin class to the end class. |
-| 5 | Indirect Extent | > 1 | The pixel changes class multiple times, ending in a different class than it began, without ever transitioning directly from the begin class to the end class. |
+| 1 | Stable Extent | = 0 | Never changes class between the begin and end time point. |
+| 2 | Stable Extent | > 1 | Changes class multiple times but returns to its begin class. |
+| 3 | Direct Extent | = 1 | Changes class exactly once, directly from begin to end class. |
+| 4 | Direct Extent | > 2 | Changes multiple times, with a direct begin-to-end transition in at least one interval. |
+| 5 | Indirect Extent | > 1 | Changes multiple times, ending in a different class, never transitioning directly from begin to end. |
+: {tbl-colwidths="[8,15,8,69]"}
+
+:::
 
 ## Decomposing the Time Series into Transition Matrices
 

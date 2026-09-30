@@ -176,15 +176,15 @@ Antonio Fonseca
 </ul>
 <p>Alternation accounts for cyclical dynamics, temporary conversions, and classification noise that traditional two-map comparisons obscure.</p>
 </section>
-<section id="categorizing-pixel-trajectories" class="slide level2 smaller scrollable">
+<section id="categorizing-pixel-trajectories" class="slide level2 smaller">
 <h2>Categorizing Pixel Trajectories</h2>
-<p>QUEST tracks every pixel from the begin time point to the end time point, grouping individual histories into five trajectories:</p>
+<div style="font-size: 0.6em">
 <table class="caption-top">
 <colgroup>
-<col style="width: 31%">
-<col style="width: 18%">
-<col style="width: 31%">
-<col style="width: 18%">
+<col style="width: 8%">
+<col style="width: 15%">
+<col style="width: 8%">
+<col style="width: 69%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -199,34 +199,35 @@ Antonio Fonseca
 <td style="text-align: center;">1</td>
 <td>Stable Extent</td>
 <td style="text-align: center;">= 0</td>
-<td>The pixel never changes class between the begin and end time point.</td>
+<td>Never changes class between the begin and end time point.</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">2</td>
 <td>Stable Extent</td>
 <td style="text-align: center;">&gt; 1</td>
-<td>The pixel changes class multiple times but returns to its begin class by the end time point.</td>
+<td>Changes class multiple times but returns to its begin class.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">3</td>
 <td>Direct Extent</td>
 <td style="text-align: center;">= 1</td>
-<td>The pixel changes class exactly once, directly from its begin class to its end class.</td>
+<td>Changes class exactly once, directly from begin to end class.</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">4</td>
 <td>Direct Extent</td>
 <td style="text-align: center;">&gt; 2</td>
-<td>The pixel changes class multiple times, and at least one time interval transitions directly from the begin class to the end class.</td>
+<td>Changes multiple times, with a direct begin-to-end transition in at least one interval.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">5</td>
 <td>Indirect Extent</td>
 <td style="text-align: center;">&gt; 1</td>
-<td>The pixel changes class multiple times, ending in a different class than it began, without ever transitioning directly from the begin class to the end class.</td>
+<td>Changes multiple times, ending in a different class, never transitioning directly from begin to end.</td>
 </tr>
 </tbody>
 </table>
+</div>
 </section>
 <section id="decomposing-the-time-series-into-transition-matrices" class="slide level2">
 <h2>Decomposing the Time Series into Transition Matrices</h2>
