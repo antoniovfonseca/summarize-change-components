@@ -47,7 +47,7 @@ Alternation accounts for cyclical dynamics, temporary conversions, and classific
 
 ## Categorizing Pixel Trajectories {.smaller}
 
-::: {style="font-size: 0.55em"}
+::: {style="font-size: 0.85em"}
 
 | Trajectory | Category | Changes | Description |
 |:---:|:---:|:---:|---|
