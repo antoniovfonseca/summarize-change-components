@@ -34,11 +34,11 @@ QUEST separates spatial change into three distinct components:
 * **Allocation Exchange:** Spatial swapping where class A transitions to class B in some locations, while class B transitions to class A in an equal number of locations elsewhere.
 * **Allocation Shift:** Spatial displacement where class B gains from class A in certain locations while simultaneously losing to class C in others.
 
-## Temporal Dynamics: Introducing Alternation
+## Introducing Alternation
 
 Analyzing a long time series requires tracking locations that experience multiple transitions over time.
 
-When a pixel changes more than once, the class that gains during an earlier interval must be the class that loses during a later interval. This behavior defines **alternation**:
+When a pixel changes more than once, the class that gains during an earlier interval must be the class that loses during a later interval. This behavior defines **Alternation**:
 
 * **Alternation Exchange:** A pixel transitions from class A to class B and subsequently returns from class B to class A.
 * **Alternation Shift:** A pixel transitions through intermediate stages (such as class A to class B to class C) without immediately returning to the initial state.
