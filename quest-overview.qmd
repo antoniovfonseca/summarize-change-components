@@ -45,7 +45,7 @@ When a pixel changes more than once, the class that gains during an earlier inte
 
 Alternation accounts for cyclical dynamics, temporary conversions, and classification noise that traditional two-map comparisons obscure.
 
-## Categorizing Pixel Trajectories {.smaller}
+## Categorizing Pixel Trajectories {.smaller .scrollable}
 
 QUEST tracks every pixel from the begin time point to the end time point, grouping individual histories into five trajectories:
 
