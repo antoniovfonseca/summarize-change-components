@@ -179,13 +179,54 @@ Antonio Fonseca
 <section id="categorizing-pixel-trajectories" class="slide level2">
 <h2>Categorizing Pixel Trajectories</h2>
 <p>QUEST tracks every pixel from the start point to the end point, grouping individual histories into five trajectories:</p>
-<ul>
-<li><strong>Trajectory 1 (Stable Extent, Changes = 0):</strong> The pixel never changes class throughout the entire time series.</li>
-<li><strong>Trajectory 2 (Stable Extent, Changes &gt; 1):</strong> The pixel undergoes multiple changes across intermediate years but finishes in its initial class.</li>
-<li><strong>Trajectory 3 (Direct Extent, Changes = 1):</strong> The pixel changes class exactly once across the timeline.</li>
-<li><strong>Trajectory 4 (Direct Extent, Changes &gt; 2):</strong> The pixel changes multiple times, but the direct step from initial class to final class exists in at least one time interval.</li>
-<li><strong>Trajectory 5 (Indirect Extent, Changes &gt; 1):</strong> The pixel ends in a different class through intermediate steps, never experiencing a direct step from start class to end class.</li>
-</ul>
+<table class="caption-top">
+<colgroup>
+<col style="width: 31%">
+<col style="width: 18%">
+<col style="width: 31%">
+<col style="width: 18%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Trajectory</th>
+<th>Category</th>
+<th style="text-align: center;">Changes</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td>Stable Extent</td>
+<td style="text-align: center;">= 0</td>
+<td>The pixel never changes class throughout the entire time series.</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2</td>
+<td>Stable Extent</td>
+<td style="text-align: center;">&gt; 1</td>
+<td>The pixel undergoes multiple changes across intermediate years but finishes in its initial class.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">3</td>
+<td>Direct Extent</td>
+<td style="text-align: center;">= 1</td>
+<td>The pixel changes class exactly once across the timeline.</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">4</td>
+<td>Direct Extent</td>
+<td style="text-align: center;">&gt; 2</td>
+<td>The pixel changes multiple times, but the direct step from initial class to final class exists in at least one time interval.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">5</td>
+<td>Indirect Extent</td>
+<td style="text-align: center;">&gt; 1</td>
+<td>The pixel ends in a different class through intermediate steps, never experiencing a direct step from start class to end class.</td>
+</tr>
+</tbody>
+</table>
 </section>
 <section id="decomposing-the-time-series-into-transition-matrices" class="slide level2">
 <h2>Decomposing the Time Series into Transition Matrices</h2>
