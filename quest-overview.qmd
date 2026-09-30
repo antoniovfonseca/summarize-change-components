@@ -81,7 +81,7 @@ QUEST expresses the total volume of transitions by separating spatial redistribu
 * **Indirect Extent:** Transitions from the begin class to the end class that occurred strictly through intermediate steps rather than direct transitions.
 
 
-## Case Study: Virginia Coast Reserve (1990–2020)
+## Case Study: Virginia Coast Reserve (1990–2020) {.smaller}
 
 To demonstrate the QUEST workflow live without excessive processing time, we analyze four time points from the Virginia Coast Reserve dataset:
 
@@ -92,4 +92,6 @@ To demonstrate the QUEST workflow live without excessive processing time, we ana
   * Summary stacked bar charts segmented by interval, overall total, and individual class gains and losses.
   * Heatmaps displaying transitions across each change component matrix.
 
-Let us open the Jupyter Notebook on Google Colab to run the pipeline step by step.
+Let us open the Jupyter Notebook on Google Colab to run the pipeline step by step, so you can apply QUEST to your own data.
+
+For guidance on interpreting QUEST results, join **Integration of Three Novel Methods to Characterize Land Cover Change Using a Time Series of Maps in a Coastal Wetland Ecosystem**, Robert Gilmore Pontius Jr, Abigail Phillips, Antonio Victor Galvão da Fonseca, Aiyin Zhang, Sergio Fagherazzi, Session 3B, Saturday, October 3, 11:30am–1:00pm, Room 205, Lane's Edge.
