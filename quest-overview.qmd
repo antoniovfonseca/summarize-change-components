@@ -94,4 +94,4 @@ To demonstrate the QUEST workflow live without excessive processing time, we ana
 
 Let us open the Jupyter Notebook on Google Colab to run the pipeline step by step, so you can apply QUEST to your own data.
 
-For guidance on interpreting QUEST results, join **Integration of Three Novel Methods to Characterize Land Cover Change Using a Time Series of Maps in a Coastal Wetland Ecosystem**, Robert Gilmore Pontius Jr, Abigail Phillips, Antonio Victor Galvão da Fonseca, Aiyin Zhang, Sergio Fagherazzi, Session 3B, Saturday, October 3, 11:30am–1:00pm, Room 205, Lane's Edge.
+For more guidance on interpreting QUEST results, join **Integration of Three Novel Methods to Characterize Land Cover Change Using a Time Series of Maps in a Coastal Wetland Ecosystem**, Session 3B, Saturday, October 3, 11:30am–1:00pm, Room 205, Lane's Edge.
