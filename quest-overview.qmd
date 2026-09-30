@@ -49,11 +49,13 @@ Alternation accounts for cyclical dynamics, temporary conversions, and classific
 
 QUEST tracks every pixel from the start point to the end point, grouping individual histories into five trajectories:
 
-* **Trajectory 1 (Stable Extent, Changes = 0):** The pixel never changes class throughout the entire time series.
-* **Trajectory 2 (Stable Extent, Changes > 1):** The pixel undergoes multiple changes across intermediate years but finishes in its initial class.
-* **Trajectory 3 (Direct Extent, Changes = 1):** The pixel changes class exactly once across the timeline.
-* **Trajectory 4 (Direct Extent, Changes > 2):** The pixel changes multiple times, but the direct step from initial class to final class exists in at least one time interval.
-* **Trajectory 5 (Indirect Extent, Changes > 1):** The pixel ends in a different class through intermediate steps, never experiencing a direct step from start class to end class.
+| Trajectory | Category | Changes | Description |
+|:---:|---|:---:|---|
+| 1 | Stable Extent | = 0 | The pixel never changes class throughout the entire time series. |
+| 2 | Stable Extent | > 1 | The pixel undergoes multiple changes across intermediate years but finishes in its initial class. |
+| 3 | Direct Extent | = 1 | The pixel changes class exactly once across the timeline. |
+| 4 | Direct Extent | > 2 | The pixel changes multiple times, but the direct step from initial class to final class exists in at least one time interval. |
+| 5 | Indirect Extent | > 1 | The pixel ends in a different class through intermediate steps, never experiencing a direct step from start class to end class. |
 
 ## Decomposing the Time Series into Transition Matrices
 
