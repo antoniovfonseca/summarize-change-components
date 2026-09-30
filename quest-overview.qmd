@@ -47,16 +47,16 @@ Alternation accounts for cyclical dynamics, temporary conversions, and classific
 
 ## Categorizing Pixel Trajectories {.smaller}
 
-::: {style="font-size: 0.6em"}
+::: {style="font-size: 0.55em"}
 
 | Trajectory | Category | Changes | Description |
-|:---:|---|:---:|---|
+|:---:|:---:|:---:|---|
 | 1 | Stable Extent | = 0 | Never changes class between the begin and end time point. |
 | 2 | Stable Extent | > 1 | Changes class multiple times but returns to its begin class. |
 | 3 | Direct Extent | = 1 | Changes class exactly once, directly from begin to end class. |
 | 4 | Direct Extent | > 2 | Changes multiple times, with a direct begin-to-end transition in at least one interval. |
 | 5 | Indirect Extent | > 1 | Changes multiple times, ending in a different class, never transitioning directly from begin to end. |
-: {tbl-colwidths="[8,15,8,69]"}
+: {tbl-colwidths="[6,12,6,76]"}
 
 :::
 
