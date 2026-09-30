@@ -29,7 +29,7 @@ QUEST resolves these blind spots by following each pixel across the entire serie
 QUEST decomposes land cover change across a full time series into two complementary views:
 
 * **Five change components:** Quantity, Allocation Exchange, Allocation Shift, Alternation Exchange, and Alternation Shift, separating spatial redistribution from temporal oscillation.
-* **Five pixel trajectories:** grouping every location's full history into interpretable categories, from stable to indirect, multi-step change.
+* **Five trajectories:** grouping every location's full history into interpretable categories, from stable to indirect, multi-step change.
 
 Together, these views reveal patterns that traditional pairwise transition matrices cannot detect, without requiring the analyst to inspect every interval individually.
 
