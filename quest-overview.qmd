@@ -1,5 +1,5 @@
 ---
-title: "QUEST: Quantity, Exchange, Shift and Trajectories"
+title: "QUEST: Quantity, Exchange, Shift, and Trajectories"
 authors: "Robert Gilmore Pontius Jr, Antonio Fonseca"
 format:
   revealjs:
