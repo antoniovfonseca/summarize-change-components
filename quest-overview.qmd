@@ -1,6 +1,6 @@
 ---
 title: "QUEST: Quantity, Exchange, Shift and Trajectories"
-author: "Antonio Fonseca"
+authors: "Robert Gilmore Pontius Jr, Antonio Fonseca"
 format:
   revealjs:
     slide-number: "c/t"
