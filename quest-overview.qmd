@@ -1,5 +1,5 @@
 ---
-title: "QUEST: Quantity, Exchange, and Shift Through Time"
+title: "QUEST: Quantity, Exchange, Shift and Trajectories"
 author: "Antonio Fonseca"
 format:
   revealjs:
