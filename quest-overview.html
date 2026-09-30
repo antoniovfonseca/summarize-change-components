@@ -180,11 +180,11 @@ Antonio Fonseca
 <h2>Categorizing Pixel Trajectories</h2>
 <p>QUEST tracks every pixel from the start point to the end point, grouping individual histories into five trajectories:</p>
 <ul>
-<li><strong>Trajectory 1 (No change):</strong> The pixel never changes class throughout the entire time series.</li>
-<li><strong>Trajectory 2 (Changes &gt;1 with stable extent):</strong> The pixel undergoes multiple changes across intermediate years but finishes in its initial class.</li>
-<li><strong>Trajectory 3 (Changes =1):</strong> The pixel changes class exactly once across the timeline.</li>
-<li><strong>Trajectory 4 (Changes &gt;2 with direct transition):</strong> The pixel changes multiple times, but the direct step from initial class to final class exists in at least one time interval.</li>
-<li><strong>Trajectory 5 (Changes &gt;1 without direct transition):</strong> The pixel ends in a different class through intermediate steps, never experiencing a direct step from start class to end class.</li>
+<li><strong>Trajectory 1 (Stable Extent, Changes = 0):</strong> The pixel never changes class throughout the entire time series.</li>
+<li><strong>Trajectory 2 (Stable Extent, Changes &gt; 1):</strong> The pixel undergoes multiple changes across intermediate years but finishes in its initial class.</li>
+<li><strong>Trajectory 3 (Direct Extent, Changes = 1):</strong> The pixel changes class exactly once across the timeline.</li>
+<li><strong>Trajectory 4 (Direct Extent, Changes &gt; 2):</strong> The pixel changes multiple times, but the direct step from initial class to final class exists in at least one time interval.</li>
+<li><strong>Trajectory 5 (Indirect Extent, Changes &gt; 1):</strong> The pixel ends in a different class through intermediate steps, never experiencing a direct step from start class to end class.</li>
 </ul>
 </section>
 <section id="decomposing-the-time-series-into-transition-matrices" class="slide level2">
