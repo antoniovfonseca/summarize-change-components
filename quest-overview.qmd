@@ -19,10 +19,10 @@ Analyzing temporal patterns typically relies on pairwise transition matrices com
 This conventional approach has fundamental limitations:
 
 * **Information overload:** A time series generates as many individual matrices as there are intervals, making comprehensive visual and quantitative assessment impractical.
-* **Missing pixel histories:** Evaluating intervals independently fails to track individual locations through time, ignoring the number of times a single pixel changes.
+* **Missing location histories:** Evaluating intervals independently fails to track individual locations through time, ignoring the number of times a single location changes.
 * **Hidden dynamics:** Traditional methods cannot detect whether a landscape change represents a permanent conversion, cyclical oscillation, or multi-step intermediate transitions.
 
-QUEST resolves these blind spots by following each pixel across the entire series to decompose change into distinct spatial and temporal components.
+QUEST resolves these blind spots by following each location across the entire time series to decompose change into distinct spatial and temporal components.
 
 ## What QUEST Does
 
