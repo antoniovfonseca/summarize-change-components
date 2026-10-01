@@ -41,7 +41,7 @@ QUEST separates spatial change into three distinct components:
 
 * **Quantity:** The absolute net change in the total area of a class across the landscape.
 * **Allocation Exchange:** Spatial swapping where class A transitions to class B in some locations, while class B transitions to class A in an equal number of locations elsewhere.
-* **Allocation Shift:** Spatial displacement where class B gains from class A in certain locations while simultaneously losing to class C in others.
+* **Allocation Shift:** Spatial displacement where class B gains from class A in some locations while losing to class C in an equal number of other locations.
 
 ## Introducing Alternation
 
