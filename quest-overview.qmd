@@ -40,7 +40,7 @@ Gross change between two time points consists of spatial redistribution and net 
 QUEST separates spatial change into three distinct components:
 
 * **Quantity:** The absolute net change in the total area of a class across the landscape.
-* **Allocation Exchange:** Spatial swapping where class A transitions to class B in some locations, while class B transitions to class A in an equal number of locations elsewhere.
+* **Allocation Exchange:** Spatial swapping where class A transitions to class B in some locations, while class B transitions to class A in an equal number of other locations.
 * **Allocation Shift:** Spatial displacement where class B gains from class A in some locations while losing to class C in an equal number of other locations.
 
 ## Introducing Alternation
