@@ -47,10 +47,10 @@ QUEST separates spatial change into three distinct components:
 
 Analyzing a long time series requires tracking locations that experience multiple transitions over time.
 
-When a pixel changes more than once, the class that gains during an earlier interval must be the class that loses during a later interval. This behavior defines **Alternation**:
+When a location changes more than once, the class that gains during an earlier interval must be the class that loses during a later interval. This behavior defines **Alternation**:
 
-* **Alternation Exchange:** A pixel transitions from class A to class B and subsequently returns from class B to class A.
-* **Alternation Shift:** A pixel transitions through intermediate stages (such as class A to class B to class C) without immediately returning to the initial state.
+* **Alternation Exchange:** A location transitions from class A to class B and subsequently returns from class B to class A.
+* **Alternation Shift:** A location transitions through intermediate stages, such as class A to class B to class C, without immediately returning to the initial state.
 
 Alternation accounts for cyclical dynamics, temporary conversions, and classification noise that traditional two-map comparisons obscure.
 
