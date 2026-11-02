@@ -214,6 +214,28 @@ evidence gathered so far. Entries that are not yet tested say so.
   measurable effects on correctness, which numbers the model uses, and on
   cost, which tokens the model reads.
 
+### 4f. A metadata tool so the agent does not guess keys
+
+- Problem: in the first Colab test the agent listed `interval_1990-2000` as
+  a valid matrix key. It does not exist in the annual series; the model took
+  it from an example in the tool docstring. The agent had no tool that
+  described the dataset itself.
+- Decision: a 21st tool, `get_dataset_metadata`, returns the years, the
+  intervals, the classes with codes and names, the NoData value, the valid
+  matrix keys, the trajectory labels, the raster grid and the warnings of
+  the input check. It reads only the configuration and does not run the
+  analysis. The fixed interval example was removed from the docstrings of
+  the matrix tools, which now point to the metadata tool, and the system
+  instruction tells the agent to use it and never guess years, intervals,
+  classes or keys.
+- Evidence: on synthetic data the matrix keys built by the tool equal the
+  keys produced by the engine, in the same order; the result has about
+  1,400 characters; the QUEST cache stays empty after the call. The 22
+  checks of the result format still pass. Not yet tested with the model.
+- Paper relevance: grounding the agent in a description of the data, rather
+  than in examples written in the code, is a direct answer to invented
+  values. The test question with a nonexistent matrix key measures it.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
