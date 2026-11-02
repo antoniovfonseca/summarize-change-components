@@ -185,6 +185,35 @@ evidence gathered so far. Entries that are not yet tested say so.
   tools that return structured errors, a metadata tool with the real keys,
   and docstrings without fixed examples.
 
+### 4e. One result format for every tool
+
+- Problem: tools returned pandas dictionaries with numeric keys turned into
+  text, a whole table as a CSV string, or, for charts, only a text that
+  described the chart. In the first Colab test, the chart for 2007 to 2011
+  gave the model no numbers, so it called a second tool and got the numbers
+  of the full series instead of the custom extent.
+- Decision: every data tool and every chart tool returns one dictionary
+  with the unit, the time extent, the number of time points, the study area,
+  readable column names and the rows. Chart tools add the numbers shown in
+  the chart. Matrices carry class names instead of class codes, and
+  trajectories carry the labels of the trajectory map legend. The data tools
+  include trajectory 1, so trajectories 1 to 5 add up to the study area.
+  The conversion is done by helper functions in the chat cell; the QUEST
+  modules and `quest_core.py` did not change.
+- Evidence: 22 of 22 checks passed on 10 synthetic rasters with 8 classes.
+  The rows of every tool match the CSV tables written by the engine; class
+  sizes add up to the study area in every year; a custom extent from 2003 to
+  2006 reports its own time extent and never more than 3 changes per pixel;
+  filters by year and interval return only the requested rows.
+- Token cost: one dictionary per row made the change components table four
+  times the size of the former CSV string, 47,086 characters. Sending a
+  header and lists of values cut it to 18,112 characters. Because the chat
+  resends its whole history, the size of tool results drives the cost of
+  every later question.
+- Paper relevance: the format of tool results is a design decision with
+  measurable effects on correctness, which numbers the model uses, and on
+  cost, which tokens the model reads.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
