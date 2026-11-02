@@ -144,6 +144,47 @@ evidence gathered so far. Entries that are not yet tested say so.
   leave out or invent a tool call. It is the basis for the tool-selection,
   latency and cost metrics of the evaluation.
 
+### 4d. First test with a hosted model and real data
+
+- Setting: Colab, VCR rasters from 1985 to 2021, 37 time points, five
+  questions in one chat session, 2 November 2026.
+- Model availability: `gemini-2.5-flash` returned 404 because Google limited
+  it to accounts that had used it before. `gemini-3.8-flash`, the model
+  recommended for new projects, returned 503 for high demand on every
+  question. In the first question the tool ran in 14.5 s and the model then
+  failed after 268.7 s in total, so about 254 s were spent waiting on the
+  model, probably in retries by the client library. `gemini-3.6-flash`
+  worked.
+- Results with `gemini-3.6-flash`:
+  1. Class sizes: correct tools; the totals of 1985 and 2021 are both
+     4,232,732 pixels, as the common valid mask requires, and the four net
+     changes match the data. 21.7 s.
+  2. Overall trajectories in pixels: correct tool and argument; the four
+     percentages match the totals. 9.4 s.
+  3. Overall number of changes from 2007 to 2011: correct custom extent
+     tool, plus an unneeded call that returned the full series, which the
+     answer did not use. 22.7 s.
+  4. Heatmap of a matrix that does not exist: the agent explained the error
+     and listed valid keys, but added `interval_1990-2000`, which does not
+     exist in this annual series and comes from an example in the
+     docstring. The tool returned the error as plain text, so the log
+     recorded the call as successful.
+  5. Question outside QUEST: refused. 1.9 s.
+- Tool selection was correct in 5 of 5 questions, with one unneeded call and
+  one invented example.
+- Cost grows with the chat: input tokens of the last model call went from
+  3,776 in the first question to 15,989 in the refusal, because the chat
+  sends the whole history. Evaluation questions must each run in a new chat.
+- Log fix: the first version counted model calls over the whole chat
+  history, giving 3, 6, 9 and 11. The count now starts after the current
+  question.
+- Paper relevance: reproducibility of an agent that depends on a hosted
+  model is limited by model availability and demand, which changed twice in
+  one afternoon. The model must be a parameter, and the evaluation must
+  report the model name and date. The test also motivates items 7 to 10:
+  tools that return structured errors, a metadata tool with the real keys,
+  and docstrings without fixed examples.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
