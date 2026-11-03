@@ -309,6 +309,34 @@ evidence gathered so far. Entries that are not yet tested say so.
   as failures of reasoning. Turning both into messages with an action is part
   of the design, and the log makes their frequency measurable.
 
+### 4i. Docstrings and a system instruction with the QUEST definitions
+
+- Problem: the docstrings said little more than the name of each tool, so
+  the model could not tell when to use a tool, what unit it returns, or that
+  two similar tools differ: the interval chart filtered by years counts the
+  changes of the whole series, while the custom extent tool recomputes the
+  analysis. The system instruction defined the scope but not the method, and
+  the second Colab test showed the agent calling a data tool after a chart
+  tool that had already returned the same numbers.
+- Decision: the docstrings of the 20 analysis tools were rewritten to say
+  what each tool returns, in which unit, when to use it, and the valid values
+  of each parameter; chart tools state that they return the numbers they
+  show. The system instruction is now a constant, `SYSTEM_INSTRUCTION`, with
+  rules of work and the QUEST definitions: time interval, number of changes,
+  extent, alternation exchange and shift, indirect extent, the components of
+  the extent and of each interval, and the five trajectories. The
+  definitions were written from the engine code and reviewed by the author.
+  Answers use "locations" instead of "pixels"; columns and options keep the
+  name "pixels" as identifiers.
+- Evidence: the schemas of the 21 tools still build; descriptions add up to
+  5,900 characters and the instruction to 2,950. The earlier checks still
+  pass: 22 for the result format, 13 for errors, and the matrix keys equal to
+  those of the engine. Not yet tested with the model.
+- Paper relevance: the instruction carries the domain knowledge the agent
+  needs, written once and reviewed by the method author, while every number
+  still comes from the engine. Keeping it in one constant lets the
+  evaluation compare versions of the instruction.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
