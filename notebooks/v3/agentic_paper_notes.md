@@ -236,6 +236,49 @@ evidence gathered so far. Entries that are not yet tested say so.
   than in examples written in the code, is a direct answer to invented
   values. The test question with a nonexistent matrix key measures it.
 
+### 4g. Second Colab test, after the result format and the metadata tool
+
+- Setting: Colab, VCR rasters from 1985 to 2021, the same five questions,
+  3 November 2026, spread over several chat sessions because of service
+  errors. Questions 1 to 3 and 5 ran with `gemini-3.6-flash`; question 4
+  and a second refusal ran with `gemini-3.5-flash-lite`.
+- Service errors in one day: five 402 errors after the prepaid credits of
+  the first account ran out, on both `gemini-3.6-flash` and
+  `gemini-3.8-flash`; one 503 for high demand on `gemini-3.6-flash` after
+  23.3 s; one 404 on `gemini-2.5-flash-lite`, no longer open to new users.
+  A second account on the free tier worked, with a limit of 5 requests per
+  minute for `gemini-3.6-flash`. One question with tools used 4 of those 5
+  requests and about 21,000 tokens in its minute, according to the AI
+  Studio usage page, while the log recorded 10,705 input tokens for the
+  last model call only.
+- Results:
+  1. Class sizes: metadata, class sizes and the class size chart. Values
+     and shares match the data, for example Water at 3,626,433 pixels and
+     85.68% in 1985. 70.3 s in total, of which 10.7 s ran the QUEST engine.
+  2. Overall trajectories in pixels: chart plus the trajectory data tool.
+     The five trajectories add up to the study area of 4,232,732 pixels;
+     trajectory 1 has 4,039,089 pixels, 95.43%. 10.6 s.
+  3. Overall number of changes from 2007 to 2011: metadata and the custom
+     extent chart only. The answer gives the numbers of the custom extent,
+     from 28,173 pixels with one change to 17 pixels with four changes,
+     where the first test gave no numbers and made an unneeded call for the
+     full series. 7.2 s.
+  4. Heatmap of a matrix that does not exist: the agent called the metadata
+     tool, did not call the heatmap tool, and listed only keys that exist,
+     such as `interval_1985-1986`. The invented key of the first test did
+     not appear. 2.0 s.
+  5. Question outside QUEST: refused by both models.
+- Remaining issues: in questions 1 and 2 the agent still called a data tool
+  in addition to a chart tool that already returned the same numbers, which
+  doubles the tokens of the tool results. Calling the metadata tool first
+  adds one model call per question, which on a 5 requests per minute limit
+  is a real cost.
+- Paper relevance: the result format fixed the custom extent answer and the
+  metadata tool removed the invented key, measured on the same questions
+  before and after. Grounding has a cost in model calls, and the free tier
+  limits the agent to about one question per minute, a constraint set by
+  the number of model calls per question, not by the QUEST computation.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
