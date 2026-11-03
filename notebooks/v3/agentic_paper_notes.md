@@ -279,6 +279,36 @@ evidence gathered so far. Entries that are not yet tested say so.
   limits the agent to about one question per minute, a constraint set by
   the number of model calls per question, not by the QUEST computation.
 
+### 4h. Errors the agent and the user can act on
+
+- Problem: three kinds of errors reached the user or the model in a form
+  nobody could act on. Service errors of the Gemini API appeared as raw
+  JSON; the two tests produced 402, 404 and 503 errors in two days. A tool
+  that raised an exception was converted by the client library into a long
+  technical message. A tool that returned an error as a result was recorded
+  as a success, as in the nonexistent matrix of the first test. Some invalid
+  arguments failed silently: a chart metric other than percentage or pixels
+  was drawn in pixels without a warning.
+- Decision: the tool decorator returns a short error instead of raising,
+  and records any result with an error as a failure. Seven tools with
+  parameters check their arguments before running: the chart metric, the
+  order of the years, both years given or neither, at least two years of the
+  dataset inside a custom extent, and requested years present in the data.
+  Each message states the valid options, such as the years of the dataset.
+  Service errors are translated into a short message with the action to take,
+  for 402, 404, 429, 5xx, a rejected key and a failed connection; for 404 the
+  suggested model is read from the API message. The log keeps the code, the
+  full error and the message shown. The system instruction asks the agent to
+  explain tool errors with the options they give and never report numbers
+  no tool returned.
+- Evidence: 13 of 13 checks passed on synthetic data, including the short
+  error reaching the model through the function-calling code of the client
+  library, and the 22 checks of the result format still pass. Not yet tested
+  with the model.
+- Paper relevance: in a hosted agent, failures of the service are as frequent
+  as failures of reasoning. Turning both into messages with an action is part
+  of the design, and the log makes their frequency measurable.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
