@@ -424,6 +424,28 @@ evidence gathered so far. Entries that are not yet tested say so.
   question, not by the number of questions, which ties the throughput of the
   agent to its tool-calling behavior.
 
+### 4m. One tool for questions about one class
+
+- Problem: a question about one class, such as how Marsh changed, needed
+  three or four tool calls: class sizes, change components, the extent
+  matrix and the time intervals matrix. Each call costs a model request,
+  and on the free tier the limit is 5 per minute.
+- Decision: `get_class_summary` returns, in one result of about 2,100
+  characters, the size of the class at the first and last time points, the
+  net change, the gain and loss summed over every time interval, the gain
+  and loss in each of the five components of the whole time extent, and the
+  transitions from and to the other classes between the first and last time
+  points, all with areas. The class name is matched without regard to case,
+  and an unknown name returns the list of classes. The system instruction
+  points questions about one class to this tool.
+- Evidence: 11 of 11 checks passed on synthetic data, against the CSV tables
+  of the engine: sizes, interval gain and loss, the five components, and the
+  extent transitions; the first size plus gains minus losses equals the last
+  size, and the Quantity gain minus loss equals the net change. The earlier
+  checks still pass.
+- Paper relevance: tools shaped around the questions users ask reduce the
+  number of model calls per question, which sets both cost and throughput.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
