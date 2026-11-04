@@ -446,6 +446,29 @@ evidence gathered so far. Entries that are not yet tested say so.
 - Paper relevance: tools shaped around the questions users ask reduce the
   number of model calls per question, which sets both cost and throughput.
 
+### 4n. A wording in a tool result led to a wrong interpretation
+
+- Test: "How did Marsh change? Give the components and where it went", with
+  `gemini-3.5-flash-lite`, 4 November 2026. The agent made one analysis
+  call, `get_class_summary`, and every number was consistent: 489,708
+  locations in 1985 minus 54,672 lost in the extent plus 31,125 gained gives
+  466,161 in 2021; the Quantity loss equals the net change of 23,547; the
+  gain summed over the intervals, 94,688, minus the extent gain gives the
+  alternation of 63,563, equal to Alternation Exchange plus Alternation
+  Shift. 27.2 s.
+- Error: the agent said that 435,036 locations "remained Marsh throughout
+  the entire time extent". That value is the diagonal of the extent matrix,
+  the locations that were Marsh at the first and last time points, which
+  includes locations that changed and came back. The note of the tool called
+  it "persistence", and the model read persistence as no change at every
+  time point.
+- Fix: the note now says that this transition counts locations in the class
+  at both the first and last time points, including those that changed and
+  came back, so it is not persistence through every time point.
+- Paper relevance: correct numbers can still be misread when the label a
+  tool attaches to them is ambiguous. Every term in a tool result is part of
+  the interface and needs the same precision as the method definitions.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
