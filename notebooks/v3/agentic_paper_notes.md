@@ -337,6 +337,41 @@ evidence gathered so far. Entries that are not yet tested say so.
   still comes from the engine. Keeping it in one constant lets the
   evaluation compare versions of the instruction.
 
+### 4j. Third Colab test, after errors, docstrings and definitions
+
+- Setting: Colab, VCR rasters from 1985 to 2021, seven questions in one
+  chat session with `gemini-3.5-flash-lite`, 4 November 2026. An earlier
+  attempt with `gemini-3.6-flash` failed with 503 after 31.5 s; the chat
+  showed the short message written for that code, and the log kept the code,
+  the full error and the two tool calls made before the failure.
+- Results:
+  1. Class sizes: metadata and the class size chart only, with no repeated
+     data tool. Values match the data. 7.8 s.
+  2. Overall trajectories in locations: the chart tool only. Trajectories 2
+     to 5 are correct. The agent added trajectory 1 by subtracting from the
+     study area, 4,039,089 locations, which is right, but gave 95.38% where
+     the data give 95.43%: a share computed by the model, against the rule of
+     the system instruction. 2.1 s.
+  3. Overall number of changes from 2007 to 2011: the custom extent tool
+     only, with the same numbers as the second test. 4.5 s.
+  4. Heatmap of a matrix that does not exist: metadata only; valid keys
+     listed, including `interval_1985-1986`. 2.2 s.
+  5. Question outside QUEST: refused. 0.9 s.
+  6. Chart in hectares: the tool returned the metric error, the log marked
+     it as a failure, and the agent gave the two valid options. 1.4 s.
+  7. Number of changes from 1970 to 1980: the tool returned the year range
+     error, marked as a failure, and the agent gave the years of the
+     dataset. 38.0 s, almost all of it waiting for the model.
+- Every answer used "locations". The chat input tokens of the last model
+  call grew from 7,839 to 10,825 over the seven questions.
+- Remaining issue: the trajectory chart returns trajectories 2 to 5, so a
+  question about trajectory 1 leads the model to compute its share. The
+  chart tool can return trajectory 1 as well, marked as not plotted.
+- Paper relevance: before and after on the same questions, the repeated data
+  call of questions 1 and 2 disappeared, and the two new error cases were
+  explained with valid options. The one wrong number came from arithmetic
+  done by the model, which supports keeping every statistic in the tools.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
