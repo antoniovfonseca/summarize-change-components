@@ -372,6 +372,38 @@ evidence gathered so far. Entries that are not yet tested say so.
   explained with valid options. The one wrong number came from arithmetic
   done by the model, which supports keeping every statistic in the tools.
 
+### 4k. Areas in square kilometers and hectares, and trajectory 1 in charts
+
+- Problem: results were in locations and percent only, so a question about
+  area required the model to multiply by a pixel area it did not have. In
+  the third test the model also computed the share of trajectory 1 itself,
+  because the trajectory chart returned trajectories 2 to 5 only, and gave
+  95.38% instead of 95.43%.
+- Decision: the area of one pixel is computed once from the first raster.
+  In a projected coordinate reference system it is the spatial resolution
+  along x times along y, converted to square meters, and it is exact. In a
+  geographic coordinate reference system it is the geodesic area of the
+  pixel at the center of the map; when the pixel area changes by more than
+  1% between the top and bottom rows, every result carries a note that areas
+  are approximate. Every count of locations in every result gets two
+  columns, in square kilometers and hectares, and each result gives the
+  study area in both units. Charts keep their axes in locations or percent;
+  areas on chart axes are left for a later version. The trajectory chart
+  tools now return trajectories 1 to 5, with a column that marks trajectory
+  1 as not plotted.
+- Evidence: 14 of 14 checks passed on synthetic data. A 30 m grid in UTM
+  gives 900 m2 per pixel, so 284,000 locations give 255.6 km2 and 25,560 ha;
+  a 0.00025 degree pixel at the equator gives 769.3 m2; a geographic raster
+  from 0 to 20 degrees of latitude is flagged as approximate, with 1.5%
+  variation. The earlier checks still pass.
+- Cost: the area columns raise the size of the change components table from
+  18,112 to 26,038 characters. Both units were kept so the model does not
+  convert between them.
+- Paper relevance: unit conversion is moved out of the model, following the
+  third test, where the one wrong number came from arithmetic by the model.
+  The treatment of geographic grids is a stated approximation, reported to
+  the user rather than hidden.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
