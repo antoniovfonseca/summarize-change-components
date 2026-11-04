@@ -404,6 +404,26 @@ evidence gathered so far. Entries that are not yet tested say so.
   The treatment of geographic grids is a stated approximation, reported to
   the user rather than hidden.
 
+### 4l. A client-side limit on model requests per minute
+
+- Problem: the free tier allows 5 model requests per minute for the models
+  tested, and one question makes 1 to 4 model calls, so two questions within
+  a minute can exceed the limit and return 429.
+- Decision: before each question, the chat counts the model calls of the
+  last minute and, when those calls plus 3 expected for the new question
+  would pass `REQUESTS_PER_MINUTE`, waits only until enough calls are older
+  than a minute and says so in the chat. The wait is logged apart from the
+  response time. The limit is a parameter of cell 2.1; 0 turns it off.
+- Evidence: with a simulated clock, a question 10 s after one with 3 calls
+  waits 51 s; a question after the window has cleared does not wait; a limit
+  of 0 never waits. In the notebook harness the wait was 61 s, as computed.
+- Limitation: the expected number of calls is an estimate, so a question
+  with more calls can still receive 429, which the error message of item 9
+  explains.
+- Paper relevance: the limit is set by the number of model calls per
+  question, not by the number of questions, which ties the throughput of the
+  agent to its tool-calling behavior.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
