@@ -469,6 +469,26 @@ evidence gathered so far. Entries that are not yet tested say so.
   tool attaches to them is ambiguous. Every term in a tool result is part of
   the interface and needs the same precision as the method definitions.
 
+### 4o. Maps of Extent, Alternation Exchange and Alternation Shift
+
+- Problem: the engine already wrote the three component rasters, but the
+  agent could only show the maps of number of changes and trajectories.
+- Decision: the maps module gained a component map with the titles and
+  legend titles of the 03_quest_pie notebook, drawn like the number of
+  changes map, and a block-by-block count of the locations of each map
+  value, so large rasters are never read whole. A 23rd tool,
+  `plot_change_component_map`, shows the map of extent, alternation exchange
+  or alternation shift and returns the locations of each value, with areas.
+- Evidence: 10 of 10 checks passed on synthetic data. The counts of each map
+  add up to the study area; the locations with extent change equal the
+  off-diagonal total of the extent matrix, 170,140; the sum of value times
+  locations equals the Alternation Exchange of the overall components,
+  24,610, and the Alternation Shift, 74,115, which confirms that the map
+  already leaves out the indirect extent, as the components table does.
+- Paper relevance: the maps and the tables come from the same engine run,
+  and the tests tie each map to the matching table, so a map shown by the
+  agent agrees with the numbers it reports.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
