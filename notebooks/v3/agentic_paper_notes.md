@@ -489,6 +489,41 @@ evidence gathered so far. Entries that are not yet tested say so.
   and the tests tie each map to the matching table, so a map shown by the
   agent agrees with the numbers it reports.
 
+### 4p. Fourth Colab test, on another VCR dataset
+
+- Setting: Colab, `gemini-3.5-flash-lite`, six questions, 8 November 2026.
+  By mistake the test used another VCR dataset, with a study area of
+  3,878,017 locations, so its numbers cannot be compared with the earlier
+  tests. The behavior of the agent does not depend on the data, and every
+  answer was checked against the tool results of the same session.
+- Results:
+  1. Area of Marsh in hectares: metadata and `get_class_summary`, with the
+     note that areas are approximate. 17.5 s, of which 15.1 s ran the engine.
+  2. Share of locations with no change: read from the trajectory chart
+     tool, which now returns trajectory 1, as 97.963%, with no arithmetic by
+     the model. 2.0 s.
+  3. How Marsh changed: one call to `get_class_summary`; every number is
+     consistent, such as 319 minus 10 plus 2 giving 311. The agent no longer
+     said that the persisting locations stayed Marsh at every time point,
+     but still used the word "persisting". 2.3 s.
+  4. Extent map: one call. The request limit waited 8.0 s before the
+     question. 3.6 s.
+  5. Alternation Exchange map and the number of locations with it: the
+     agent added the rows itself; the sum, 22,716 locations, and the share,
+     0.5858%, were right, but the area, 16.19 ha, was wrong by a factor of
+     100. It also made an unneeded call to `get_overall_number_of_changes`.
+  6. Map of Quantity: the agent did not call the map tool, which would have
+     returned the error, and made an unneeded call to `get_class_summary`
+     for Trees, but it explained that Quantity has no map and gave its value
+     from the components tool. The request limit waited 29.2 s.
+- Fix: the map tool now returns two totals, with areas and shares: the
+  locations with a value above 0, and the changes in the component, the sum
+  of value times locations. On synthetic data both totals match the sums of
+  the rows, and the earlier 10 checks still pass.
+- Paper relevance: the second wrong number in four tests came, like the
+  first, from arithmetic done by the model on rows the tool returned. Each
+  time the fix was to return the needed total from the tool.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
