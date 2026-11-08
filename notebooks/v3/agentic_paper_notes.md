@@ -523,6 +523,11 @@ evidence gathered so far. Entries that are not yet tested say so.
 - Paper relevance: the second wrong number in four tests came, like the
   first, from arithmetic done by the model on rows the tool returned. Each
   time the fix was to return the needed total from the tool.
+- Retest of question 5 on the VCR dataset of the earlier tests, the same
+  day: one analysis call; the answer took the total from the tool, 68,491
+  locations with alternation exchange, 1.6181% of the study area of
+  4,232,732 locations and 4,882.88 ha, which matches the rows of the same
+  result. 14.3 s, of which 11.7 s ran the engine.
 
 ### 5. Bounded autonomy with controlled flexibility
 
