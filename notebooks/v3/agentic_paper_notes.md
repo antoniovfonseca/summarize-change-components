@@ -829,6 +829,11 @@ evidence gathered so far. Entries that are not yet tested say so.
   is true but ambiguous was enough to make one model skip the analysis
   tool, so the names of the values a tool returns are part of the tool
   description the model reads.
+- Final scores after the changes, with A6, B1 and B2 asked again and A11
+  asked again after the 503: 120 answers, no service error, 118 correct on
+  every automatic score; the two errors are D4 in both repetitions. A6 was
+  9 and B2 94.6443% in both repetitions. 2.5 model calls, about 6,400
+  input tokens and a median of 10 s per answer.
 
 ### 5. Bounded autonomy with controlled flexibility
 
