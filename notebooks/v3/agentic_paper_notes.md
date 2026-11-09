@@ -605,6 +605,48 @@ evidence gathered so far. Entries that are not yet tested say so.
   predictable and reportable, and saved charts make every answer of an
   evaluation run auditable after the session.
 
+### 4t. Evaluation design and scoring
+
+- Design agreed for Phase 5: 60 questions in eight categories, one number,
+  custom time extent, one class, charts and maps, invalid input, outside
+  QUEST, comparison, and six translations into Portuguese and Spanish of
+  questions in the other categories. Questions are templates filled from
+  the metadata of each dataset; the four classes are the four largest by
+  number of locations at the first time point, so the same set runs on any
+  legend. Datasets: VCR and PIE, with western Bahia as an option. Models:
+  `gemini-3.5-flash-lite` for the full evaluation, 60 questions with 2
+  repetitions per dataset, about 720 requests within its free limit of 500
+  per day and 15 per minute; `gemini-3.6-flash`, with a free limit of 20 per
+  day, on a subset of 15 questions with 1 repetition. Each question runs in
+  a new chat, so the history of earlier questions does not change the
+  answer or the cost.
+- References: for each question, the expected tools and arguments, and the
+  numbers that must appear in the answer, computed with the same functions
+  the tools use, without the model. The engine was validated separately
+  against the 03_quest_pie notebook and numpy, so the evaluation measures
+  the agent, not QUEST.
+- Scores per answer: tool selection, with every expected tool called with
+  the expected arguments; extra calls; share of reference numbers found in
+  the answer; numbers of the answer with no source in the tool results of
+  the same question; behavior, an answer, an explained error or a refusal;
+  language of the answer; model calls, tokens and time; and service errors,
+  kept apart. A number counts as grounded when it equals a number of the
+  results, or the sum or difference of two numbers of the same column, or
+  the sum of three numbers of a small column. Numbers are read with either a
+  point or a comma as the decimal separator, and a separator counts as
+  thousands only before groups of exactly three digits.
+- Evidence: with a scripted fake model on synthetic data, every injected
+  fault was detected: a value in square kilometers given as hectares, a
+  wrong tool, a wrong period, an answer in the wrong language, a tool call on
+  a question outside QUEST, an extra call, and a 503 that was asked again on
+  the next run. Correct sums and differences computed by the model were not
+  flagged.
+- Limitation: a number in the wrong unit can still match a number of the
+  results, so grounding alone does not catch unit errors; the reference
+  check does.
+- Transparency: the evaluation lives in Section 6 of the notebook, with the
+  questions, references and scoring visible, and runs only when switched on.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
