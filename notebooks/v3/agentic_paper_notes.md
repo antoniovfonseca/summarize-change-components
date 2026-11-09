@@ -579,6 +579,32 @@ evidence gathered so far. Entries that are not yet tested say so.
   they describe the same quantity, which the evaluation can use as an
   internal consistency check that needs no reference answer.
 
+### 4s. Saved charts and explicit retries on server errors
+
+- Review of the robustness items: the engine already shows a progress bar
+  for every run, including custom time extents, so nothing changed there.
+  Maps already saved their files, but the nine chart methods of the class
+  size, number of changes, trajectory, transition and component modules only
+  showed the figure, which was lost when the session ended. Without an
+  explicit setting, the client library made no or implicit retries on
+  server errors, which matches the uneven waits seen in the tests: 254 s on
+  one day, 23 s and 31 s on others.
+- Decision: while a chart tool runs, the figure is saved to
+  OUTPUT_PATH/charts before it is shown, and the result gives the file in
+  "chart_file"; the chart modules did not change. The client now retries a
+  failed model call up to 3 times on 500, 503 and 504, waiting about 5 s and
+  then about 10 s, with a maximum of 30 s; 429 is left to the request limit
+  of entry 4l. A retry repeats only the model call that failed, not the
+  tools already run.
+- Evidence: all 11 chart tools wrote a PNG and returned its path; error
+  results and map tools got no chart file; matplotlib was restored after
+  each call. A local server that returned 503 twice and then answered gave
+  the answer after requests at 0.1, 5.4 and 15.5 s; three 503 gave the error
+  after 15.9 s; a 429 was not retried. All earlier checks still pass.
+- Paper relevance: bounded, stated retries make latency under service errors
+  predictable and reportable, and saved charts make every answer of an
+  evaluation run auditable after the session.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
