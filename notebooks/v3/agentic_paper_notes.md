@@ -553,6 +553,32 @@ evidence gathered so far. Entries that are not yet tested say so.
   filtering numbers of the whole series, which would give wrong components
   for the period.
 
+### 4r. Fifth Colab test, custom time extents
+
+- Setting: Colab, the VCR dataset of the earlier tests, `gemini-3.5-flash-lite`,
+  three questions, 9 November 2026.
+- Results:
+  1. Overall change components from 2007 to 2011: one analysis call with
+     the period. The five components add up to 35,264, which equals the
+     total number of changes in the custom extent chart of the second test,
+     28,173 + 2 x 3,078 + 3 x 289 + 4 x 17, a check across two tools and two
+     sessions. 10.7 s.
+  2. How Marsh changed between 2000 and 2010: one call,
+     `get_class_summary("Marsh", 2000, 2010)`. Every number is consistent:
+     484,594 minus 20,174 lost plus 10,703 gained gives 475,123; the
+     Quantity loss equals the net change of 9,471; the interval gains minus
+     the extent gains, 10,649, equal Alternation Exchange plus Alternation
+     Shift. The agent described the diagonal correctly, as locations in
+     Marsh at both time points including those that changed and returned,
+     after the fix of entry 4n. One heading was mislabeled, "Other classes
+     gained from Marsh" for gains of Marsh. The request limit waited 44.1 s.
+  3. Heatmap of an interval outside the period: the tool returned the
+     error, the agent listed the four intervals of 2007 to 2011 and offered
+     the full series instead. 3.1 s.
+- Paper relevance: numbers from different tools and sessions agree when
+  they describe the same quantity, which the evaluation can use as an
+  internal consistency check that needs no reference answer.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
