@@ -721,6 +721,61 @@ evidence gathered so far. Entries that are not yet tested say so.
   of the method code, which automatic scores alone would have reported as
   agent errors.
 
+### 4w. Rerun of the affected questions on VCR
+
+- Setting: the questions changed in entry 4v asked again, 2 repetitions,
+  `gemini-3.5-flash-lite`, 9 November 2026; A10 and G5 were not in this
+  rerun and still hold answers scored against their earlier versions.
+- Results of the rerun:
+  1. G4, the interval with the most changing locations: both repetitions
+     gave 1991 to 1992 and 16,385 locations, read from the interval totals,
+     where the run before gave 13,697 and 12,027, numbers the model had
+     added itself.
+  2. D2 now asks for the chart and both repetitions called the chart tool.
+  3. G2 now asks about net change and both repetitions compared +26,805 for
+     Water with -23,547 for Marsh, the reference values.
+  4. C6 and A12 now take the shares from the tools.
+  5. G1 kept answering with one class summary per class, now accepted.
+- Scores of all 120 answers, with A10 and G5 still from the earlier version:
+  expected tools in 98.9% of the answers that require tools, 98.5% of
+  reference numbers found, 0.8% of answers with a number that no tool
+  returned, the G5 sum of entry 4v, correct behavior in 99.2%, answer in
+  the language of the question in 100%; median time 4.0 s and 2.66 model
+  calls per question.
+- Paper relevance: the change in G4 is a controlled before and after on the
+  same question and model: once the tool returned the total, the answer
+  became correct and identical across repetitions.
+
+### 4x. Final scores on VCR with gemini-3.5-flash-lite
+
+- Setting: all 60 questions with 2 repetitions on VCR, after the fixes of
+  entries 4u to 4w, with A10 and G5 asked again in their new versions, 9
+  November 2026. A rerun of two questions first did nothing, because the
+  ids were typed with quotes in the form field and matched no question
+  without any warning; the runner now ignores quotes and stops on unknown
+  ids.
+- Scores of the 120 answers: expected tools called in every answer that
+  requires tools; every reference number and reference text found; no
+  answer with a number that no tool returned; correct behavior in every
+  answer, including the 16 on invalid input, the 8 outside QUEST and the 12
+  in Portuguese and Spanish; every answer in the language of the question;
+  the two repetitions of each question agreed on tool selection and
+  reference numbers in all 60 questions; no service error; median time
+  3.8 s, 2.66 model calls and 6,022 input tokens per question; 0.18 extra
+  tool calls per answer.
+- Manual review of C8, which asks whether the 16,231 locations that were
+  Trees at the first and last time points never changed: both repetitions
+  said that this does not mean they never changed. One repetition also
+  said that 11,652 of these locations belong to trajectory 2, a number taken
+  from the trajectory 2 transition matrix, which counts transitions summed
+  over the intervals, not locations. The number exists in a tool result, so
+  grounding did not flag it; the error is in its interpretation.
+- Paper relevance: on this dataset and model, after the changes driven by
+  the evaluation itself, automatic scores reached their ceiling, so the
+  remaining errors are of meaning, such as the unit of a matrix cell, and
+  need human reading. The second dataset and the second model test whether
+  these scores hold without further changes.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
