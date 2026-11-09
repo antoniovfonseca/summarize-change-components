@@ -529,6 +529,30 @@ evidence gathered so far. Entries that are not yet tested say so.
   4,232,732 locations and 4,882.88 ha, which matches the rows of the same
   result. 14.3 s, of which 11.7 s ran the engine.
 
+### 4q. Custom time extents for matrices, components and class summaries
+
+- Problem: the custom time extent existed only for the charts of number of
+  changes and trajectories. A question such as the components of change
+  from 2003 to 2006, or the transitions of one class in that period, could
+  not be answered with the numbers of that period.
+- Decision: seven tools gained optional start and end years: the two
+  transition matrix tools, the four change component tools and the class
+  summary. With both years, the tool builds a new module of the same type
+  restricted to those years, so the engine runs again with the common valid
+  mask of that period, and the result states the period used. Without years
+  nothing changes. The year checks of item 9 apply, and an interval matrix
+  key outside the period returns an error that says so.
+- Evidence: 13 of 13 checks passed on synthetic data, against an
+  independent computation with numpy on the rasters for 2003 to 2006 with
+  the same common mask: the extent matrix, an interval matrix, the study
+  area and the first and last sizes and transitions of one class are equal;
+  Quantity plus Allocation Exchange plus Allocation Shift equals the extent
+  change of 79,243 locations. All earlier checks still pass.
+- Paper relevance: the time extent is a parameter of the analysis that the
+  user sets in words, and the agent passes it to the engine instead of
+  filtering numbers of the whole series, which would give wrong components
+  for the period.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
