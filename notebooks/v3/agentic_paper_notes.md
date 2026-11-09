@@ -678,6 +678,49 @@ evidence gathered so far. Entries that are not yet tested say so.
   model from a missing column; both led to changes in the tools or the
   reference, not in the scores by hand.
 
+### 4v. Full evaluation run on VCR with gemini-3.5-flash-lite
+
+- Setting: Section 6 on Colab, VCR, `gemini-3.5-flash-lite`, 60 questions with
+  2 repetitions, 9 November 2026. The per-minute retry of entry 4u let the
+  run finish; 120 answers.
+- Summary before review: behavior was correct in every answer of the
+  invalid input, outside QUEST and other language categories; every
+  reference number was found in the single number, custom extent and one
+  class categories; median time 1.2 to 5.0 s per question.
+- Review of the 19 flagged answers, by cause:
+  1. Arithmetic by the model, the only real errors: in G4 the agent named
+     the right interval, 1991 to 1992, but gave 13,697 changing locations in
+     one repetition and 12,027 in the other, because it had to add dozens of
+     rows; in C6 it computed the shares of the components of one class,
+     correctly, because the class summary had no percent for them; in G5 it
+     added two areas and got 143.54 km2 for 143.24.
+  2. Questions or references written by us: G2 asked whether one class
+     "gained" more than another, and the agent read gain as the gain summed
+     over the intervals, a QUEST quantity, while the reference used the net
+     change; G1 was answered with one class summary per class, a valid path
+     not in the accepted tools; D2 said "show" and the agent showed a table
+     instead of the chart; G5 asked about "Allocation", which the engine uses
+     both for the three extent components, as in Allocation_Quantity, and,
+     in the overall summary, for Exchange and Shift only, so the reference
+     and the agent disagreed on a term the code itself uses two ways.
+  3. Scoring: a question asked twice after a 429 was counted twice, and a
+     difference between numbers of two calls of the same tool was flagged
+     as ungrounded.
+- Fixes: the number of changes and trajectory tools per interval return
+  the changing locations of each interval; the class summary returns the
+  shares of each component. G2 now asks about net change, G5 compares
+  Alternation with the change between the first and last time points, D2
+  asks for the chart, G1 accepts the class summary, and the reference of G4
+  includes the interval total. The scores keep the latest answer of each
+  question and repetition and compare columns of the same name across calls;
+  listed questions are asked again even if answered.
+- Paper relevance: in a full run, every number the agent got wrong came
+  from arithmetic over tool rows, never from a wrong tool result, which is
+  the case for returning totals and shares from the tools. Reading the
+  flagged answers also found ambiguities in our own questions and in a term
+  of the method code, which automatic scores alone would have reported as
+  agent errors.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
