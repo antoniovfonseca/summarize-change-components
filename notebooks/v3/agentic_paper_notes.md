@@ -647,6 +647,37 @@ evidence gathered so far. Entries that are not yet tested say so.
 - Transparency: the evaluation lives in Section 6 of the notebook, with the
   questions, references and scoring visible, and runs only when switched on.
 
+### 4u. First evaluation run on VCR, stopped by the per-minute limit
+
+- Setting: Section 6 on Colab, VCR, `gemini-3.5-flash-lite`, 9 November 2026.
+  The run answered 19 questions, A1 to B7, in 3.5 minutes and stopped at B8
+  with a 429 for the limit of 15 requests per minute, although the request
+  limit of the chat had counted at most 15 calls in the last minute. The
+  runner stopped as designed for a daily limit, which this was not.
+- Scores of the 19 answers: every expected tool called with the expected
+  arguments except one, every reference number found, and one answer with a
+  number that no tool returned. Median time 3.1 to 3.8 s per question.
+- Review of the flagged answers:
+  1. A10, Alternation Exchange over the whole series: the agent used the
+     component map, whose totals give the same 167,896 changes as the
+     components chart. A valid choice, so the map tool was added to the
+     accepted tools of A10.
+  2. A12, locations that were Water in 1985 and 2021: the number was right,
+     3,587,126, and the agent described it correctly as including locations
+     that changed and came back, but it computed the share, 84.75%, itself,
+     because matrix rows had no percent column. The share is correct, but
+     it breaks the rule that every statistic comes from a tool.
+- Fixes: matrix rows and the transitions of the class summary now include
+  the percent of the study area. The request limit of the chat now expects
+  4 model calls per question instead of 3. The runner reads the error of a
+  429: for the per-minute limit it waits the delay given by the service and
+  asks again, up to 3 times; it stops only for a daily limit or missing
+  credits.
+- Paper relevance: automatic flags needed a human reading to tell a valid
+  alternative tool from a wrong one, and a correct share computed by the
+  model from a missing column; both led to changes in the tools or the
+  reference, not in the scores by hand.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
