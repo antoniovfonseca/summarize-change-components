@@ -776,6 +776,60 @@ evidence gathered so far. Entries that are not yet tested say so.
   need human reading. The second dataset and the second model test whether
   these scores hold without further changes.
 
+### 4y. First part of the PIE run with gemini-3.5-flash-lite
+
+- Setting: Section 6 on PIE, 8 classes, `gemini-3.5-flash-lite`, first
+  repetition, 9 November 2026, with no change to the tools or questions
+  after the VCR run. The four classes chosen by area at the first time
+  point were Water, High marsh, Other and Trees, so the criterion picked a
+  class named Other, which a person would likely not choose.
+- The run answered 40 questions, A1 to E3, and stopped at E4 with a 429 for
+  the daily limit of the free tier, GenerateRequestsPerDayPerProjectPerModel,
+  as designed; it resumes from E4 on the next run.
+- Scores of the 40 answers: 39 correct on every automatic score. One error,
+  B2, which asks for the share of locations with no change between 1994 and
+  2003: the agent called the trajectory tool of the whole series instead of
+  the custom extent tool and reported its 79.0% as the share of that period,
+  where the reference is 94.6%. The number exists in a tool result, so it is
+  grounded; the reference check caught it. On VCR the same question was
+  answered with the custom extent tool in both repetitions.
+- Paper relevance: the first error on the second dataset is of a new kind,
+  a period silently dropped, with a correct number from the wrong time
+  extent, which is the case where grounding alone would report a correct
+  answer.
+
+### 4z. PIE with gemini-3.1-flash-lite, and the fixes that followed
+
+- Setting: the free daily limit of 500 requests counts per model and per
+  project, so after gemini-3.5-flash-lite reached it, the full PIE run went
+  to gemini-3.1-flash-lite, 2 repetitions, 9 November 2026: 120 answers,
+  301 model calls, one 503 at A11 that is asked again on the next run.
+- Errors of the agent: A6 in both repetitions answered 36 as the largest
+  number of changes, where the reference is 9. The model read the field
+  max_number_of_changes of the metadata, which held the largest possible
+  number, the number of time intervals, and called no analysis tool.
+  gemini-3.5-flash-lite answered A6 correctly. D4 in both repetitions
+  returned the table of trajectories per interval instead of the chart.
+  B2, missed by gemini-3.5-flash-lite, was correct in both repetitions.
+- Errors of the scoring: G3 and G5 were correct but given in percent of the
+  study area, while the reference listed only numbers of locations.
+- Time: median of 10 s per answer, against 3 s for gemini-3.5-flash-lite,
+  with no wait for the rate limit.
+- Changes, approved by the author:
+  1. The docstrings of get_overall_trajectories and
+     get_overall_number_of_changes name the custom extent tool for a
+     period shorter than the whole time extent, after B2.
+  2. The metadata field became max_possible_number_of_changes, after A6.
+  3. A reference number can hold equivalent values, the number of
+     locations and its percent, used for G3 and G5; answers of the dataset
+     loaded are scored with the references computed at scoring time, so the
+     correction applies to answers already recorded.
+- Paper relevance: a second model reproduces the design lesson of the
+  arithmetic errors with a new cause. A field name in a tool result that
+  is true but ambiguous was enough to make one model skip the analysis
+  tool, so the names of the values a tool returns are part of the tool
+  description the model reads.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
