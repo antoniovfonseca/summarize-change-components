@@ -867,6 +867,12 @@ evidence gathered so far. Entries that are not yet tested say so.
   - PIE, `gemini-3.5-flash-lite`: 119 of 120; the error is the 16.30% sum
     of G5 in repetition 1.
   - PIE, `gemini-3.1-flash-lite`: 120 of 120; median of 10 s per answer.
+- `gemini-3.6-flash` on PIE, 1 repetition, first day: A1, A7, A11, B3 and
+  B4 correct on every automatic score; C1 stopped at the free daily limit of
+  20 requests, so the subset of 15 questions runs at 5 questions per day. A
+  first attempt with a wrong model name returned 404 for every question
+  without stopping, so the runner now stops at a 404 with a message that
+  names the model.
 
 ### 5. Bounded autonomy with controlled flexibility
 
