@@ -855,6 +855,18 @@ evidence gathered so far. Entries that are not yet tested say so.
   get_trajectory_per_interval names plot_trajectory_interval_chart for a
   request to show, plot or draw the trajectories per interval. D4 is asked
   again on PIE for both models and on VCR.
+- Rerun on the final version, 10 November 2026: D4 called
+  plot_trajectory_interval_chart in both repetitions on PIE with both
+  models. On VCR with `gemini-3.5-flash-lite`, A6, B1, B2 and D4 were asked
+  again in both repetitions, with the same references as before, and all
+  eight answers were correct.
+- Final scores, every answer on the same version of the tools:
+  - VCR, `gemini-3.5-flash-lite`: 120 of 120 answers correct on every
+    automatic score; median of 4 s, 2.7 model calls and about 6,900 input
+    tokens per answer.
+  - PIE, `gemini-3.5-flash-lite`: 119 of 120; the error is the 16.30% sum
+    of G5 in repetition 1.
+  - PIE, `gemini-3.1-flash-lite`: 120 of 120; median of 10 s per answer.
 
 ### 5. Bounded autonomy with controlled flexibility
 
