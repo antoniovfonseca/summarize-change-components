@@ -908,6 +908,16 @@ evidence gathered so far. Entries that are not yet tested say so.
   cannot show charts or maps. The three Portuguese questions were answered
   with the English refusal sentence, while the three Spanish ones were
   answered in Spanish.
+- Result on PIE with `gemini-3.1-flash-lite`, 2 repetitions, 10 November
+  2026: 120 answers, no service error, one model call each, median of
+  about 0.85 s. No correct number and no invented number. Most answers
+  began with the refusal sentence and then said that the description holds
+  no such value, and some asked the user to supply the value. A6 in both
+  repetitions answered "The maximum possible number of changes for any
+  location is 36", the field of the metadata, for a question about the
+  largest observed number, which is 9; the scoring counts it as another
+  number of the context. Unlike `gemini-3.5-flash-lite`, it answered the
+  Portuguese questions in Portuguese.
 - Paper relevance: under the same rules, the tools are what turn a refusal
   into an answer; the model did not fill the gap with invented numbers.
   The rule against estimating statistics shapes this result, so the control
