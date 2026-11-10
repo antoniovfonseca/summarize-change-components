@@ -874,6 +874,31 @@ evidence gathered so far. Entries that are not yet tested say so.
   without stopping, so the runner now stops at a 404 with a message that
   names the model.
 
+### 4ab. A control with the same model and no tools
+
+- Motivation: the multi-agent and tool-use studies the author selected
+  compare their systems with a model that answers without the system's
+  tools or structure, such as a single agent or a general chat model, so the
+  share of correct answers can be attributed to the architecture.
+- Design, approved by the author: `EVAL_MODE = "no_tools"` in cell 6.1 asks
+  the same 60 questions to the same model and temperature, each in a new
+  chat, with no tools. The system instruction keeps the scope rule, the
+  language rule and the QUEST definitions of the agent, replaces "every
+  number must come from a tool result" with "every number must come from
+  the description of the dataset below", and appends the output of
+  get_dataset_metadata, the same description the agent reads. The metadata
+  hold no study area, so a count of locations is not in the context.
+- Scoring: every answer that expects numbers gets an outcome: correct, an
+  invented number that is in neither the reference nor the context, no
+  number, or another number of the context. The summary reports the share
+  of each outcome by mode. In the control, tool selection is not scored,
+  and the behavior of categories E and F, which checks that no analysis tool
+  was called, is true by construction, so those answers are reviewed by
+  hand.
+- Plan: PIE with `gemini-3.5-flash-lite` and `gemini-3.1-flash-lite`, 2
+  repetitions each, then VCR with `gemini-3.5-flash-lite`. Records go to
+  separate files ending in `_no_tools.jsonl`.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
