@@ -898,6 +898,20 @@ evidence gathered so far. Entries that are not yet tested say so.
 - Plan: PIE with `gemini-3.5-flash-lite` and `gemini-3.1-flash-lite`, 2
   repetitions each, then VCR with `gemini-3.5-flash-lite`. Records go to
   separate files ending in `_no_tools.jsonl`.
+- Result on PIE with `gemini-3.5-flash-lite`, 2 repetitions, 10 November
+  2026: 120 answers, no service error, one model call each, median of
+  about 1.3 s. No answer gave a correct number and no answer invented one:
+  every answer that expected numbers gave no number. In most answers the
+  model repeated the refusal sentence of the scope rule, "My scope is the
+  QUEST analysis of these data", also for questions inside the scope; in
+  others it said that the description holds no such statistics or that it
+  cannot show charts or maps. The three Portuguese questions were answered
+  with the English refusal sentence, while the three Spanish ones were
+  answered in Spanish.
+- Paper relevance: under the same rules, the tools are what turn a refusal
+  into an answer; the model did not fill the gap with invented numbers.
+  The rule against estimating statistics shapes this result, so the control
+  measures the model under the agent's rules, not the model with no rules.
 
 ### 5. Bounded autonomy with controlled flexibility
 
