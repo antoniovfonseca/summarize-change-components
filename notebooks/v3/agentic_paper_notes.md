@@ -835,6 +835,27 @@ evidence gathered so far. Entries that are not yet tested say so.
   9 and B2 94.6443% in both repetitions. 2.5 model calls, about 6,400
   input tokens and a median of 10 s per answer.
 
+### 4aa. PIE with gemini-3.5-flash-lite on the corrected tools
+
+- Setting: the full PIE run with `gemini-3.5-flash-lite`, 2 repetitions,
+  10 November 2026, after the changes of 4z, so every answer used the same
+  version of the tools: 120 answers, no service error.
+- Scores: 118 answers correct on every automatic score. A6 was 9 and B2
+  94.6443% in both repetitions, so the two changes of 4z fixed the errors
+  of 4y and 4z for this model too. Median of 7 s per answer, 2.7 model
+  calls and about 7,200 input tokens.
+- Errors: D4 in repetition 2 called get_trajectory_per_interval instead of
+  the chart, the same error of gemini-3.1-flash-lite in 4z, and wrote "the
+  table above" with no table shown. G5 in repetition 1 reached the correct
+  conclusion and the correct numbers of locations, but added 13.22% and
+  3.09% as 16.30%, where the sum is 16.31%; the grounding check flagged it.
+  This is the same kind of error as the arithmetic of 4v, done by the model
+  on values it already had.
+- Change, approved by the author: the docstring of
+  get_trajectory_per_interval names plot_trajectory_interval_chart for a
+  request to show, plot or draw the trajectories per interval. D4 is asked
+  again on PIE for both models and on VCR.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
