@@ -937,6 +937,34 @@ evidence gathered so far. Entries that are not yet tested say so.
   The rule against estimating statistics shapes this result, so the control
   measures the model under the agent's rules, not the model with no rules.
 
+### 4ac. Accuracy by number of tools and by arguments, on the final runs
+
+- Data: the final agent runs, 92 answers with tool requirements per model
+  and dataset, 2 repetitions: VCR and PIE with `gemini-3.5-flash-lite`, PIE
+  with `gemini-3.1-flash-lite`, and the 9 answers of `gemini-3.6-flash`.
+  Questions of categories E and F and two questions in other languages
+  have no tool requirement and are left out.
+- Tool name and arguments, scored apart as in the tool-use studies the
+  author selected: in every run, the model called the expected tool for
+  each of the 94 requirements, 9 for `gemini-3.6-flash`, and gave the
+  expected arguments for each of the 30 requirements with arguments, such
+  as the first and last years of a custom time extent or the metric of a
+  chart, 4 for `gemini-3.6-flash`.
+- By number of tools: 45 of the 46 questions need one tool, and one
+  question, the comparison of the components of two time intervals, needs
+  two calls of the same tool. Every answer of that question was correct.
+  The question set does not support a claim about accuracy as the number
+  of tools grows.
+- By arguments: answers to questions that need one tool and arguments were
+  all correct, 26 per run; answers to questions that need one tool and no
+  arguments were correct in 64 of 64 per run, except the sum of 16.30% on
+  PIE with `gemini-3.5-flash-lite`.
+- Paper relevance: on the final version of the tools, tool selection and
+  arguments were not a source of error; the remaining error came from
+  arithmetic by the model. The errors of tool selection and arguments of
+  entries 4y, 4z and 4aa happened before the fixes and are part of the
+  design record, not of the final scores.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
