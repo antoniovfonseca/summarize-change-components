@@ -1026,6 +1026,31 @@ evidence gathered so far. Entries that are not yet tested say so.
   `gemini-3.5-flash-lite`, 60 questions and 2 repetitions each, with the
   remaining days of `gemini-3.6-flash` on PIE.
 
+### 4af. Rerun of PIE with gemini-3.1-flash-lite on the final version
+
+- Setting: 60 questions, 2 repetitions, 11 November 2026, from an empty
+  evaluation file, on the frozen version of 4ae: 120 answers, no service
+  error, 298 model calls.
+- Scores: 119 of 120 answers correct on every automatic score. Of 1,841
+  checked numbers, 1,836 had a source in the tool results. Median of 2.3 s
+  per answer, 2.5 model calls and about 6,500 input tokens; the earlier run
+  of 4z had a median of 10 s with the same model and questions, so the time
+  per answer depends on the load of the service.
+- The error: the question on the share of locations with no change between
+  1994 and 2003, in repetition 2. The agent called only the chart of the
+  number of changes for that temporal extent, summed the four rows of
+  changing locations, 12,606, subtracted the sum from the study area,
+  235,374, and reported 222,768 locations and 94.64%. The numbers equal the
+  reference, but the expected tool, the trajectory chart of the chosen
+  temporal extent, returns trajectory 1 directly, and the sum of four rows
+  falls outside the grounding rule, which accepts sums of at most three
+  numbers. Repetition 1 called the trajectory chart and reported 94.6443%.
+  The answer is counted as an error, since the version is frozen; the
+  cause is arithmetic by the model over tool results, the same cause of
+  most errors of the development.
+- Consistency: 59 of 60 questions had the same correctness and the same
+  tools in both repetitions; the exception is this question.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
