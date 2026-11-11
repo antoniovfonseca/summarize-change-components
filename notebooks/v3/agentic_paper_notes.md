@@ -918,6 +918,14 @@ evidence gathered so far. Entries that are not yet tested say so.
   largest observed number, which is 9; the scoring counts it as another
   number of the context. Unlike `gemini-3.5-flash-lite`, it answered the
   Portuguese questions in Portuguese.
+- Result on VCR with `gemini-3.5-flash-lite`, 2 repetitions, 11 November
+  2026: 120 answers, no service error, one model call each. The same
+  pattern as on PIE: no correct number, no invented number, and 115 of the
+  120 answers began with the refusal sentence of the scope rule. The
+  numbers that appeared were years of the question or of the metadata.
+  Seven of the twelve answers to the questions in Portuguese and Spanish
+  were the English refusal sentence: five of the six in Portuguese and two
+  of the six in Spanish.
 - Paper relevance: under the same rules, the tools are what turn a refusal
   into an answer; the model did not fill the gap with invented numbers.
   The rule against estimating statistics shapes this result, so the control
