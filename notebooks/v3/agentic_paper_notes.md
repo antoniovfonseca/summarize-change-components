@@ -965,6 +965,43 @@ evidence gathered so far. Entries that are not yet tested say so.
   entries 4y, 4z and 4aa happened before the fixes and are part of the
   design record, not of the final scores.
 
+### 4ad. Summary numbers, consistency and the reading of the control
+
+- Correct answers, the three full agent runs on the final version of the
+  tools: 359 of 360 answers, 99.7%: 120 of 120 on VCR with
+  `gemini-3.5-flash-lite`, 119 of 120 on PIE with `gemini-3.5-flash-lite`
+  and 120 of 120 on PIE with `gemini-3.1-flash-lite`. `gemini-3.6-flash`
+  had 9 of 9 at this date, with 6 questions to run.
+- Numbers with a source: the scoring checks every number of an answer
+  except years and whole numbers up to 12. In the three full runs, the
+  answers held 7,778 checked numbers, and 7,777 had a source in the tool
+  results of the same question; the one exception is the 16.30% sum. The
+  176 checked numbers of `gemini-3.6-flash` all had a source.
+- Consistency between the two repetitions, 60 questions per run: the
+  correctness of the answer was the same in both repetitions for 60 of 60
+  questions on VCR with `gemini-3.5-flash-lite`, 59 of 60 on PIE with
+  `gemini-3.5-flash-lite`, the 16.30% sum, and 60 of 60 on PIE with
+  `gemini-3.1-flash-lite`. The tool calls, ignoring arguments given
+  explicitly with their default value, were the same in both repetitions
+  for 60, 54 and 58 questions. The differences were extra calls, such as a
+  second chart or a map before the components chart, one alternative valid
+  tool for a class size, and one invalid metric tried before the valid
+  call; every one of these answers was correct.
+- Reading of the control answers whose behavior is true by construction,
+  24 per run: every answer to a question outside QUEST refused, 8 of 8 per
+  run. For invalid input, the answer named the problem, such as a class
+  that does not exist or years outside the time series, in 2 of 16 answers
+  on PIE and 2 of 16 on VCR with `gemini-3.5-flash-lite`, and in 9 of 16
+  on PIE with `gemini-3.1-flash-lite`; the other answers gave the refusal
+  sentence of the scope rule or said that the model cannot draw charts or
+  maps.
+- Control, per answer: one model call; median time of 1.3 s on PIE and
+  1.4 s on VCR with `gemini-3.5-flash-lite` and 0.8 s on PIE with
+  `gemini-3.1-flash-lite`; about 2,040 input tokens on PIE and 2,010 on
+  VCR. Answers that expected numbers: 66 per run, all with no number,
+  except 2 on PIE with `gemini-3.1-flash-lite` that gave a number of the
+  context, the largest possible number of changes.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
