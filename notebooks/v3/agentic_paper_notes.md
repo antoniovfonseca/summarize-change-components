@@ -1002,6 +1002,30 @@ evidence gathered so far. Entries that are not yet tested say so.
   except 2 on PIE with `gemini-3.1-flash-lite` that gave a number of the
   context, the largest possible number of changes.
 
+### 4ae. Final version of the tools and the reruns
+
+- Decision of the author, 11 November 2026: after the last change, all 60
+  questions run again on every dataset and model of the agent runs, so the
+  final scores describe one version of the tools. The tools, the tool
+  descriptions, the metadata field names, the questions and the references
+  are frozen from this commit; a later change would require every run
+  again.
+- The three no-tools controls ran after the metadata field became
+  max_possible_number_of_changes, and the control receives no tool
+  descriptions, so the controls do not run again. Both models received the
+  same context on PIE, about 2,040 input tokens per answer.
+- Change of the scoring only, approved by the author: cell 6.5 flags every
+  agent answer that fails at least one automatic score, every control
+  answer whose behavior is true by construction, the questions with
+  invalid input and outside QUEST, and every question marked for reading.
+  On the earlier runs this flagged 1 to 3 agent answers per run and 26
+  control answers per run, 24 of them by construction and 2 marked for
+  reading.
+- Reruns, each starting from an empty evaluation file: PIE with
+  `gemini-3.1-flash-lite`, PIE with `gemini-3.5-flash-lite`, then VCR with
+  `gemini-3.5-flash-lite`, 60 questions and 2 repetitions each, with the
+  remaining days of `gemini-3.6-flash` on PIE.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
