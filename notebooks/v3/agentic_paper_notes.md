@@ -873,6 +873,12 @@ evidence gathered so far. Entries that are not yet tested say so.
   first attempt with a wrong model name returned 404 for every question
   without stopping, so the runner now stops at a 404 with a message that
   names the model.
+- Second day, 11 November 2026: C1, C8, D3 and D9 correct on every
+  automatic score, and C8 said that the 30,232 locations of Trees at both
+  time points may have changed and come back. E3 stopped at the daily
+  limit. The model used 2 to 5 calls per question, so the free limit of 20
+  requests per day allows about 4 questions; 9 of the 15 questions are
+  answered, all correct.
 
 ### 4ab. A control with the same model and no tools
 
