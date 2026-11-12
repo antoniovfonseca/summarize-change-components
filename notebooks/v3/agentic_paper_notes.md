@@ -879,6 +879,11 @@ evidence gathered so far. Entries that are not yet tested say so.
   limit. The model used 2 to 5 calls per question, so the free limit of 20
   requests per day allows about 4 questions; 9 of the 15 questions are
   answered, all correct.
+- Third day, 12 November 2026: the chart in hectares, the class that does
+  not exist, the projection to 2050, the net change of two classes and the
+  time interval with the most change were correct on every automatic
+  score. The question in Portuguese stopped at the daily limit; 14 of the
+  15 questions are answered, all correct.
 
 ### 4ab. A control with the same model and no tools
 
