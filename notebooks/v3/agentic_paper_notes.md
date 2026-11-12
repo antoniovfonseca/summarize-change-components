@@ -1051,6 +1051,44 @@ evidence gathered so far. Entries that are not yet tested say so.
 - Consistency: 59 of 60 questions had the same correctness and the same
   tools in both repetitions; the exception is this question.
 
+### 4ag. Rerun of PIE with gemini-3.5-flash-lite on the final version
+
+- Setting: 60 questions, 2 repetitions, 12 November 2026, from an empty
+  evaluation file, on the frozen version of 4ae: 120 answers, no service
+  error, 323 model calls.
+- Scores: 116 of 120 answers correct on every automatic score. Of 3,668
+  checked numbers, 3,665 had a source in the tool results. Median of 6.0 s
+  per answer, 2.7 model calls and about 7,700 input tokens. The correctness
+  was the same in both repetitions for 58 of 60 questions, and the tools
+  for 56 of 60.
+- Errors:
+  1. The question that asks to show the change components by class for
+     1994 to 2003, in both repetitions: the agent called the table of
+     change components instead of the chart by class, and listed the rows
+     of the table; repetition 1 also labeled Quantity as "Allocation
+     Quantity". This is the error of wrong type of output, a table for a
+     request to show, already seen with the trajectories per interval; in
+     the run of 4aa the same question was answered with the chart.
+  2. The question on the locations of Trees at the first and last time
+     points, in repetition 1: the number, 30,232, and the explanation that
+     these locations may have changed and come back were correct, but the
+     answer added "43,292 locations" across all classes with trajectory 2
+     and "4,3292 locations", read from the trajectory 2 transition matrix,
+     which sums transitions over the time intervals. The first number is
+     a sum of values of that matrix, so the grounding check accepts it; the
+     second has no source. The question is marked for reading, so a person
+     reads the answer. This is the error of a matrix cell read as
+     locations, already seen on VCR.
+  3. The comparison of Alternation with the change between the first and
+     last time points, in repetition 2: the conclusion and the numbers of
+     locations were correct, but the agent added 13.22% and 3.09% as
+     16.30% and 20.54 km² and 4.80 km² as 25.34 km², where the sums of the
+     values the tool returned, 13.2164% plus 3.0887% and 20.5441 km² plus
+     4.8012 km², round to 16.31% and 25.35 km². Arithmetic by the model on
+     rounded values.
+- The version is frozen, so no change follows; the three errors join
+  Table 5 with their causes.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
