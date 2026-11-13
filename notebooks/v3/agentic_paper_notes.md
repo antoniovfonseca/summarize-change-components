@@ -884,6 +884,13 @@ evidence gathered so far. Entries that are not yet tested say so.
   time interval with the most change were correct on every automatic
   score. The question in Portuguese stopped at the daily limit; 14 of the
   15 questions are answered, all correct.
+- Fourth day, 13 November 2026: the question in Portuguese on how Water
+  changed was answered in Portuguese and correct. Final scores of the
+  subset: 15 of 15 answers correct on every automatic score; 398 checked
+  numbers, all with a source in the tool results; median of 13.7 s per
+  answer, 3.0 model calls and about 7,700 input tokens. The answers were
+  longer than those of the flash-lite models and listed every row of the
+  class summary.
 
 ### 4ab. A control with the same model and no tools
 
