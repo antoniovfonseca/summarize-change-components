@@ -1101,6 +1101,62 @@ evidence gathered so far. Entries that are not yet tested say so.
 - The version is frozen, so no change follows; the three errors join
   Table 5 with their causes.
 
+### 4ah. Rerun of VCR with gemini-3.5-flash-lite on the final version
+
+- Setting of the VCR run: 60 questions, 2 repetitions, 13 November 2026, from an empty evaluation file, on the frozen version of 4ae: 120 answers, no service error, 322 model calls.
+- Scores: 117 of 120 answers correct on every automatic score. Of 3,204 checked numbers, 3,202 had a source in the tool results. Median of 3.4 s per answer, 2.7 model calls and about 7,000 input tokens. The correctness was the same in both repetitions for 57 of 60 questions, and the tools for 59 of 60.
+- Failures:
+  1. Unit mixed when copying a number, in the change components by class for 1994 to 2003, repetition 1. The agent called the expected chart, but for a loss of 11 locations wrote 0.01 ha and 0.0008 km², where 11 locations are about 0.78 ha and 0.0078 km². The answer also labeled Quantity as "Allocation_Quantity".
+  2. Unit mixed when copying a number, in the comparison of the components of two time intervals, repetition 2. The agent wrote Alternation Shift as 7,331.10 ha, the value in square kilometers, 7.331, with the label of hectares, where the tool returned 733.10 ha. The numbers of locations were correct.
+  3. An error of the scoring, not of the agent, in the question in Spanish outside QUEST, repetition 2. The answer refused in Spanish, "Mi ámbito se limita al análisis QUEST de estos datos", but the language detector of cell 6.5 counted the same number of Portuguese and Spanish common words, because "de" is in both lists, and the tie went to Portuguese. A correction of the word lists is pending; the correction changes only the scoring, so no run is needed, and with the correction the run has 118 of 120 correct answers.
+- The `gemini-3.6-flash` subset ended the same day, as recorded under
+  4aa; the changes made after its first two days do not change what the
+  model receives in the agent mode, so the whole subset describes the final
+  version.
+
+### 4ai. Summary numbers of the final version
+
+- Every agent run below used the frozen version of 4ae. The no-tools controls of 4ab ran after the last change that reaches the control, the name max_possible_number_of_changes, so the controls also describe the final version.
+
+| Dataset | Model | Answers | Correct | Checked numbers with a source | Same correctness in both repetitions | Same tools in both repetitions | Median time, s | Model calls | Input tokens |
+|---|---|---|---|---|---|---|---|---|---|
+| VCR | gemini-3.5-flash-lite | 120 | 117, 118 with the language correction | 3,202 of 3,204 | 57 of 60 | 59 of 60 | 3.4 | 2.7 | about 7,000 |
+| PIE | gemini-3.5-flash-lite | 120 | 116 | 3,665 of 3,668 | 58 of 60 | 56 of 60 | 6.0 | 2.7 | about 7,700 |
+| PIE | gemini-3.1-flash-lite | 120 | 119 | 1,836 of 1,841 | 59 of 60 | 59 of 60 | 2.3 | 2.5 | about 6,500 |
+| PIE | gemini-3.6-flash | 15 | 15 | 398 of 398 | one repetition | one repetition | 13.7 | 3.0 | about 7,700 |
+
+- Totals of the three full runs: 352 of 360 answers correct, 97.8%, or 353 of 360, 98.1%, with the language correction; 8,703 of 8,713 checked numbers with a source in the tool results, 99.9%.
+- Tool and arguments scored apart, per run of 94 tool requirements, 30 of them with arguments: the expected tool in 94, 92 and 93 requirements for VCR with `gemini-3.5-flash-lite`, PIE with `gemini-3.5-flash-lite` and PIE with `gemini-3.1-flash-lite`, and in 12 of 12 for `gemini-3.6-flash`. Every requirement with the expected tool also had the expected arguments, so the failures of arguments are the same answers as the failures of the tool.
+- Errors of the agent on the final version, by cause, for Table 5:
+  1. Wrong type of output, a table for a request to show: the change components by class for 1994 to 2003, both repetitions, PIE with `gemini-3.5-flash-lite`. In the run of 4aa, before the freeze, the same question was answered with the chart.
+  2. Arithmetic by the model over tool results: the share of locations with no change from 1994 to 2003, repetition 2, PIE with `gemini-3.1-flash-lite`, computed by summing four rows of the chart of the number of changes, with the correct value but without the expected tool; and the comparison of Alternation with the change between the first and last time points, repetition 2, PIE with `gemini-3.5-flash-lite`, where sums of rounded values gave 16.30% and 25.34 km² for 16.31% and 25.35 km².
+  3. Matrix cell read as locations: the locations of Trees at the first and last time points, repetition 1, PIE with `gemini-3.5-flash-lite`, where the correct answer added numbers from the trajectory 2 transition matrix as locations.
+  4. Unit mixed when copying a number: two answers on VCR with `gemini-3.5-flash-lite`, described in 4ah.
+- The version is frozen, so none of these errors led to a change.
+- Checked numbers without a source in the tool results, 10 in the three
+  full runs, all in answers among the failures above:
+  - VCR, `gemini-3.5-flash-lite`: "0.0008" km² in the change components by
+    class for 1994 to 2003, repetition 1; "7,331.10" ha in the comparison of
+    the overall change components of 1994 to 2003 with those of 2003 to
+    2021, repetition 2. Both are units mixed when copying a number.
+  - PIE, `gemini-3.5-flash-lite`: "4,3292" locations in the question on the
+    locations of Trees at the first and last time points, repetition 1, a
+    matrix cell read as locations; "16.30" % and "25.34" km² in the
+    comparison of Alternation with the change between the first and last
+    time points, repetition 2, arithmetic by the model.
+  - PIE, `gemini-3.1-flash-lite`: "12,606" twice, "222,768", "94.64" and
+    "100" in the share of locations with no change between 1994 and 2003,
+    repetition 2, arithmetic by the model. 222,768 and 94.64% equal the
+    reference, but the sum of four rows exceeds the three numbers the
+    grounding check accepts.
+- Two wrong numbers passed the grounding check, both in answers that are
+  failures for another number: "0.01" ha in the same answer on VCR, where 11
+  locations are about 0.78 ha, because 0.01 appears in another row of the
+  result; and "43,292" locations in the same answer on Trees, the sum of two
+  values of the trajectory 2 matrix, which the check accepts as a sum of at
+  most three numbers of one column.
+- Accuracy by number of tools, from 4ac, still holds: 45 of the 46 questions with a tool requirement need one tool, so the question set does not support a claim about accuracy as the number of tools grows.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
