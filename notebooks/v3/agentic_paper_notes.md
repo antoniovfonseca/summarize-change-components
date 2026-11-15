@@ -1157,6 +1157,163 @@ evidence gathered so far. Entries that are not yet tested say so.
   most three numbers of one column.
 - Accuracy by number of tools, from 4ac, still holds: 45 of the 46 questions with a tool requirement need one tool, so the question set does not support a claim about accuracy as the number of tools grows.
 
+### 4aj. VCR with gemini-3.1-flash-lite on the final version, agent and control
+
+- Design decided by the author on 13 November 2026: the paper keeps the
+  two free flash-lite models, `gemini-3.5-flash-lite` and
+  `gemini-3.1-flash-lite`, each on both datasets with the agent and the
+  no-tools control; `gemini-3.6-flash` leaves the paper. This run fills the
+  last cell of that design.
+- Agent, 60 questions, 2 repetitions, 13 November 2026, from an empty
+  evaluation file, on the frozen version of 4ae: 120 answers, no service
+  error, 307 model calls. 120 of 120 answers correct on every automatic
+  score. Of 1,793 checked numbers, all had a source in the tool results.
+  Median of 7.6 s per answer, 2.6 model calls and about 6,500 input tokens.
+  The correctness was the same in both repetitions for 60 of 60 questions,
+  and the tools for 59 of 60; the exception is the share of locations with
+  no change between 1994 and 2003, with one extra call in repetition 1. The
+  expected tool was called for 94 of 94 requirements, and the expected
+  arguments were given for 30 of 30 requirements with arguments.
+- Control, same model, same questions, 2 repetitions: 120 answers, no
+  service error, one model call each, median of 2.4 s, about 2,010 input
+  tokens. Of the 66 answers that expected numbers, 64 gave no number and 2
+  gave another number of the context, the largest possible number of
+  changes, 36, for the largest observed number. Every answer to a question
+  outside QUEST refused, 8 of 8. For invalid input, 10 of 16 answers named
+  the problem: years outside the time series, a reversed temporal extent, a
+  chart in hectares and a class that does not exist; the others gave the
+  refusal sentence or said that the model cannot draw charts, maps or
+  heatmaps. All 12 answers to the questions in Portuguese and Spanish were
+  in the language of the question.
+- The first invented numbers of a control: the request to show the overall
+  trajectories chart in pixels, both repetitions, answered without a chart
+  but with "Trajectory 1: 5,547,040 locations" and 0 locations for
+  trajectories 2 to 5. 5,547,040 is the width times the height of the
+  raster grid in the metadata, 1,874 by 2,960, so the model multiplied two
+  values of the context and reported the product as the locations with no
+  change, where the study area has 4,232,732 locations. The outcome classes
+  of 4ab apply only to questions with reference numbers, and this question
+  has none, so the scoring counted no invented number; the grounding check
+  flagged 5,547,040 as a number without a source in the context.
+- Summary of the four full agent runs on the final version: 472 of 480
+  answers correct, 98.3%; 10,496 of 10,506 checked numbers with a source in
+  the tool results, 99.9%.
+
+### 4ak. Western Bahia with gemini-3.5-flash-lite, agent and control
+
+- Dataset: the western Bahia time series of the 2025 article in
+  Transactions in GIS, never used in the development of the agent. 7 time
+  points from 1990 to 2020, every five years; 19 classes; spatial
+  resolution of 30 m in ESRI:102033, so the area of one location is exact,
+  900 m²; grid of 10,240 by 20,480; study area of 209,715,059 locations,
+  188,743.55 km². The four largest classes at the first time point, which
+  fill the questions, were Savanna Formation, Grassland, Pasture and Mosaic
+  of Uses. EVAL_DATASET_NAME is "bahia".
+- Control, 13 November 2026, 120 answers, no service error, one model call
+  each, median of 1.0 s, about 1,300 input tokens. Of the 66 answers that
+  expected numbers, 65 gave no number. One answer counted as correct: the
+  largest number of changes, repetition 2, answered with the largest
+  possible number of changes from the metadata, 6, which with 7 time points
+  equals the largest observed number; the model answered a different
+  quantity that coincides with the reference. No invented number and no
+  checked number in any answer. Every answer to a question outside QUEST
+  refused, 8 of 8; no answer to invalid input named the problem, 0 of 16,
+  all gave the refusal sentence. By reading, 5 of the 12 answers to the
+  questions in Portuguese and Spanish used the language of the question,
+  one of them mixing Spanish and English; the language detector counted 2,
+  because of the tie between Portuguese and Spanish common words of 4ah.
+- Agent, 13 and 14 November 2026, resumed after the daily limit stopped the
+  run at the 17th answer: 120 answers, no service error, 321 model calls.
+  114 of 120 answers correct on every automatic score. Of 3,842 checked
+  numbers, 3,839 had a source in the tool results. Median of 3.2 s per
+  answer, 2.7 model calls and about 7,400 input tokens. The correctness
+  was the same in both repetitions for 56 of 60 questions, and the tools
+  for 55 of 60. The expected tool was called for 93 of 94 requirements, and
+  the expected arguments were given for 29 of 30 requirements with
+  arguments; the missing one is the failed call below.
+- Failures:
+  1. Digits dropped when copying a long number, a cause new in this
+     dataset, whose counts reach hundreds of millions of locations and
+     whose areas reach millions of hectares: the area of Savanna Formation
+     in 1990, both repetitions, written as 1,165,316.54 ha where the tool
+     returned 11,653,165.44 ha, while the square kilometers, 116,531.65,
+     were correct; the loss of Savanna Formation summed over every time
+     interval, written as "50,49.96 km²" for 50,949.96 km², in the question
+     on gain and loss, repetition 1, and in the question on how Savanna
+     Formation changed, repetition 2; and the map of the number of
+     changes, repetition 1, with 2,959,519.50 ha for 295,951.95 ha, next to
+     the correct 2,959.52 km².
+  2. A call to a tool that does not exist: the share of locations with no
+     change between 1995 and 2005, repetition 2. After the chart of the
+     number of changes for that temporal extent, the model requested a
+     function named "get_custom_extent_overall_changes_chart_data_if_needed",
+     and the request ended with a KeyError, recorded as an error of the
+     agent and not of the service, with no answer. Repetition 1 answered
+     correctly.
+- The area answer of Savanna Formation also said that areas are
+  approximate, although the result gave an exact area for a projected
+  coordinate reference system.
+
+### 4al. Western Bahia with gemini-3.1-flash-lite, agent and control
+
+- Control, 14 November 2026, 120 answers, no service error, one model call
+  each, median of 1.1 s, about 1,300 input tokens. Four answers counted as
+  correct, none of them by a value the model could know: the size of the
+  study area, both repetitions, answered as 209,715,200 locations and
+  188,743.68 km², the width times the height of the grid, 10,240 by
+  20,480, times 900 m², where the study area has 209,715,059 locations
+  and 188,743.55 km², within the tolerance of 0.1% of the scoring; and the
+  largest number of changes, both repetitions, answered as 6, the largest
+  possible number with 7 time points, which equals the largest observed
+  number. Invented numbers in the request for the change components in
+  each time interval from 2005 to 2020, both repetitions: Quantity,
+  Exchange and Shift for each of the three time intervals, such as
+  10,580,245 locations, with different values in the two repetitions; the
+  question has no reference numbers, so the outcome classes do not count
+  them, and the grounding check flagged them. Of the 26 checked numbers of
+  the control, 22 had no source in the context: the 18 invented values of
+  the components and the 4 values of the grid product. Of the 66 answers
+  that expected numbers, 60 gave no number and 2 gave another number of
+  the context. Every answer to a question outside QUEST refused, 8 of 8;
+  4 of 16 answers to invalid input named the problem, years outside the
+  time series and a chart in hectares. All 12 answers to the questions in
+  Portuguese and Spanish were in the language of the question.
+- Agent, 14 November 2026, 120 answers; three answers that ended with a 503
+  of the service were asked again in a second run the same day, so the
+  final record has no service error; 303 model calls. 114 of 120 answers
+  correct on every automatic score. Of 1,336 checked numbers, 1,333 had a
+  source in the tool results. Median of 3.5 s per answer, 2.5 model calls
+  and about 7,200 input tokens. The correctness was the same in both
+  repetitions for 58 of 60 questions, and the tools for 59 of 60. The
+  expected tool was called for 93 of 94 requirements, and the expected
+  arguments were given for 29 of 30 requirements with arguments; the
+  missing one is the first failure below.
+- Failures:
+  1. Arithmetic by the model over tool results: the share of locations
+     with no change between 1995 and 2005, repetition 2. The agent called
+     only the chart of the number of changes for that temporal extent,
+     subtracted the two rows from the study area, 209,715,065, reported
+     167,452,773 locations and 79.8477%, where the reference is 79.8478%,
+     and did not call the expected trajectory chart. The same failure of
+     4af with this model on PIE.
+  2. Incomplete list: where the Grassland locations went between 1990 and
+     2020, both repetitions. The answer listed the 7 largest transitions,
+     all correct, and summarized the rest as smaller transitions, while
+     the reference holds all 17 transitions, some of 3 or 22 locations. A
+     legend of 19 classes makes lists longer than in VCR and PIE.
+  3. Another unit: how Savanna Formation changed, in Portuguese, both
+     repetitions. The answer was correct in square kilometers and percent
+     of the study area, while the reference lists numbers of locations.
+  4. A correct number with no source: the trajectories in each time
+     interval, repetition 1, added that one location of 900 m² is 0.09 ha,
+     a correct conversion that no tool returned.
+  Only the first failure is a wrong number; failures 2 and 3 come from the
+  reference and 4 from the grounding rule.
+- Summary of the six full agent runs on the final version, VCR, PIE and
+  western Bahia with both models: 700 of 720 answers correct, 97.2%;
+  15,668 of 15,684 checked numbers with a source in the tool results,
+  99.9%.
+
 ### 5. Bounded autonomy with controlled flexibility
 
 - Problem: an agent limited to fixed tools can look rigid, while an agent that
